@@ -1,0 +1,12 @@
+[project]
+
+name = "gp"
+version = "0.1.0"
+description = "Backend API for Plabable exam question extraction and retrieval."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pdfplumber"
+]

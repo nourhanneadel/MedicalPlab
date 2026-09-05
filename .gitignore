@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Secrets and environment variables
+.env
+*.log
+
+# Temporary PDFs or large raw files
+Data/Plabable/Topics/*.pdf
+Data/Plabable/Topics/txts/

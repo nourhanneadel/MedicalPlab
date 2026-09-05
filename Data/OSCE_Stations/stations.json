@@ -1,0 +1,209 @@
+[
+    {
+        "id": "osce-01",
+        "title": "Station 1: Acute Chest Pain in Emergency (Arthur Pendelton)",
+        "specialty": "Cardiology / Acute Medicine",
+        "patient_name": "Arthur Pendelton",
+        "patient_age": 58,
+        "patient_gender": "Male",
+        "vital_signs": "BP 155/92 mmHg, HR 98 bpm, RR 20/min, SpO2 96% on room air, Temp 36.8\u00b0C",
+        "candidate_brief": "You are a Foundation Doctor in the Acute Medical Unit. Arthur Pendelton, a 58-year-old accountant, presents with central chest tightness that started 2 hours ago while walking upstairs. Please take a focused history, assess his risk factors, explain your differential diagnosis, and discuss immediate management.",
+        "patient_brief": {
+            "personality": "Anxious, clutching chest occasionally, worried he is having a fatal heart attack like his father.",
+            "chief_complaint": "Heavy tightness in the center of my chest, like an elephant sitting on me.",
+            "history_of_present_illness": "Started 2 hours ago after climbing stairs. Mildly improved when sitting down but still present as a dull ache. Radiates slightly to left inner arm and jaw.",
+            "associated_symptoms": "Felt sweaty and nauseous when it started. No vomiting. Mild shortness of breath.",
+            "past_medical_history": "Type 2 Diabetes for 8 years, High Blood Pressure for 12 years. Not had chest pain like this before.",
+            "medications": "Metformin 1000mg BD, Ramipril 10mg OD. Often forgets to take his Ramipril.",
+            "social_history": "Smokes 15 cigarettes a day for 35 years. Drinks 15-20 units of beer per week. High stress job.",
+            "family_history": "Father died of myocardial infarction at age 52.",
+            "key_concerns": "'Doctor, am I having a heart attack? Will I survive this?'"
+        },
+        "marking_scheme": {
+            "communication_skills": [
+                "Introduces self clearly and establishes rapport",
+                "Acknowledges patient's anxiety and offers reassurance without false promises",
+                "Listens actively without interrupting patient's narrative"
+            ],
+            "history_taking": [
+                "Explores SOCRATES of chest pain (Site, Onset, Character, Radiation, Associated, Timing, Exacerbating, Severity)",
+                "Checks cardiovascular risk factors (Diabetes, HTN, Smoking, Family History)",
+                "Screens for red flags: hemodynamic instability, severe dyspnea, syncope"
+            ],
+            "clinical_judgment": [
+                "Identifies Acute Coronary Syndrome (STEMI vs NSTEMI) as primary concern",
+                "Orders immediate 12-lead ECG and serial cardiac troponins",
+                "Explains immediate treatment clearly: Aspirin 300mg, second antiplatelet, pain relief"
+            ],
+            "patient_safety": [
+                "Does not leave patient unattended in unstable state",
+                "Ensures IV access and continuous cardiac monitoring"
+            ]
+        }
+    },
+    {
+        "id": "osce-02",
+        "title": "Station 2: Progressive Breathlessness & Cough (Brenda Higgins)",
+        "specialty": "Respiratory Medicine",
+        "patient_name": "Brenda Higgins",
+        "patient_age": 64,
+        "patient_gender": "Female",
+        "vital_signs": "BP 138/84 mmHg, HR 88 bpm, RR 22/min, SpO2 91% on room air, Temp 37.1\u00b0C",
+        "candidate_brief": "Brenda Higgins, a 64-year-old retired cleaner, attends the GP surgery complaining of worsening shortness of breath over the past 6 months and a morning cough. Take a focused history, discuss investigations, and propose an initial management plan.",
+        "patient_brief": {
+            "personality": "Slightly breathless when speaking long sentences, frustrated that she cannot play with her grandchildren.",
+            "chief_complaint": "I get out of breath just walking to the local corner shop.",
+            "history_of_present_illness": "Breathlessness has crept up over the last 2 years, but much worse in the last 6 months. Frequent morning cough with small amounts of white/clear sputum.",
+            "associated_symptoms": "No chest pain, no hemoptysis, no ankle swelling, no unexplained weight loss.",
+            "past_medical_history": "Frequent 'chest infections' in winter requiring antibiotics from the GP.",
+            "medications": "Over-the-counter cough syrup (doesn't help).",
+            "social_history": "Smoked 20 cigarettes a day since age 18 (approx 45 pack-years). Worked as a school cleaner for 25 years.",
+            "family_history": "No known respiratory illnesses.",
+            "key_concerns": "'Do I have lung cancer, doctor? My brother had it.'"
+        },
+        "marking_scheme": {
+            "communication_skills": [
+                "Speaks at a calm pace and checks patient's understanding",
+                "Directly addresses her fear of lung cancer empathetically",
+                "Offers smoking cessation support non-judgmentally"
+            ],
+            "history_taking": [
+                "Assesses MRC Dyspnea scale / functional impairment",
+                "Takes thorough smoking and occupational exposure history",
+                "Screens for red flag symptoms of malignancy (hemoptysis, weight loss, night sweats)"
+            ],
+            "clinical_judgment": [
+                "Identifies COPD as most likely diagnosis; mentions Asthma and Heart failure as differentials",
+                "Orders post-bronchodilator spirometry (diagnostic test) and Chest X-ray",
+                "Discusses inhaler therapy (SABA/SAMA) and pulmonary rehabilitation"
+            ],
+            "patient_safety": [
+                "Recognizes SpO2 91% and explains target oxygen considerations in COPD"
+            ]
+        }
+    },
+    {
+        "id": "osce-03",
+        "title": "Station 3: Tremors, Heat Intolerance & Palpitations (Sophie Clark)",
+        "specialty": "Endocrinology",
+        "patient_name": "Sophie Clark",
+        "patient_age": 31,
+        "patient_gender": "Female",
+        "vital_signs": "BP 142/78 mmHg, HR 112 bpm (regular), RR 16/min, SpO2 99%, Temp 37.4\u00b0C",
+        "candidate_brief": "Sophie Clark, a 31-year-old graphic designer, presents with a 2-month history of nervousness, palpitations, and unintended weight loss. Take a focused history, conduct relevant queries, explain the likely diagnosis and discuss the next steps.",
+        "patient_brief": {
+            "personality": "Fidgety, speaks quickly, fans herself as she feels too warm in the room.",
+            "chief_complaint": "My heart races randomly, and my hands won't stop shaking when I hold a pen.",
+            "history_of_present_illness": "Over the past 8 weeks: lost 6 kg despite eating more than usual. Trouble sleeping, feeling constantly hot, increased bowel frequency (loose stools 3x/day).",
+            "associated_symptoms": "Noticed her eyes feel gritty and dry. Irregular light menstrual periods.",
+            "past_medical_history": "Vitiligo on hands since childhood. Otherwise well.",
+            "medications": "Occasional ibuprofen.",
+            "social_history": "Drinks 2 cups of coffee a day. Non-smoker. No illicit drugs.",
+            "family_history": "Maternal aunt has Hashimoto's thyroiditis.",
+            "key_concerns": "'My friends told me I might have an anxiety panic disorder, but it feels physical!'"
+        },
+        "marking_scheme": {
+            "communication_skills": [
+                "Calms the patient and validates her symptoms as genuinely physical",
+                "Explains medical terms (e.g. hyperthyroidism) in simple language",
+                "Gives time for patient questions"
+            ],
+            "history_taking": [
+                "Elicits systemic thyrotoxic symptoms (weight loss, heat intolerance, tremor, diarrhea)",
+                "Asks specifically about eye symptoms (diplopia, grittiness, retro-orbital ache)",
+                "Identifies personal and family history of autoimmune disorders"
+            ],
+            "clinical_judgment": [
+                "Identifies Graves' Disease as primary diagnosis (thyrotoxicosis with possible eye involvement)",
+                "Orders Thyroid Function Tests (TSH, free T4, free T3) and TSH-receptor antibodies (TRAb)",
+                "Discusses symptomatic control with Beta-blockers (Propranolol) and definitive antithyroid medications (Carbimazole)"
+            ],
+            "patient_safety": [
+                "Warns about agranulocytosis risk with Carbimazole (report sore throat/fever immediately)"
+            ]
+        }
+    },
+    {
+        "id": "osce-04",
+        "title": "Station 4: Thunderclap Headache & Red Flags (Marcus Vance)",
+        "specialty": "Neurology / Emergency Medicine",
+        "patient_name": "Marcus Vance",
+        "patient_age": 42,
+        "patient_gender": "Male",
+        "vital_signs": "BP 168/96 mmHg, HR 82 bpm, RR 18/min, SpO2 98%, Temp 37.0\u00b0C",
+        "candidate_brief": "Marcus Vance, a 42-year-old solicitor, is brought to the Emergency Department with sudden-onset excruciating occipital headache reaching maximum intensity within 30 seconds. Take a focused history, identify red flags, and outline your immediate investigation plan.",
+        "patient_brief": {
+            "personality": "Keeps eyes shut because room lights hurt his eyes (photophobia). Holds back of his neck.",
+            "chief_complaint": "I felt like someone struck me with a baseball bat across the back of my head.",
+            "history_of_present_illness": "Started 4 hours ago while weightlifting at the gym. Instant agonizing pain (10/10 severity within seconds). Vomited twice in the car.",
+            "associated_symptoms": "Neck stiffness, sensitive to bright lights. No focal limb weakness, no speech difficulty, no loss of consciousness.",
+            "past_medical_history": "Mild migraine history in his twenties, but insists 'this is completely different'.",
+            "medications": "None.",
+            "social_history": "Smokes 10 cigarettes a day. Drinks socially. No recreational drugs.",
+            "family_history": "Mother died of a 'ruptured brain aneurysm' at age 48.",
+            "key_concerns": "'I think my brain is bleeding like my mother's did.'"
+        },
+        "marking_scheme": {
+            "communication_skills": [
+                "Maintains a quiet, dimmed environment for photophobic patient",
+                "Communicates with urgency while remaining reassuring and composed",
+                "Involves patient/family in urgent decision-making"
+            ],
+            "history_taking": [
+                "Identifies thunderclap onset (< 1 minute to peak intensity)",
+                "Checks for meningism (photophobia, neck stiffness) and elevated ICP (vomiting)",
+                "Elicits crucial family history of intracranial aneurysms"
+            ],
+            "clinical_judgment": [
+                "Recognizes Subarachnoid Hemorrhage (SAH) as emergency working diagnosis",
+                "Orders immediate Non-contrast CT Head within 6 hours of onset (highest sensitivity)",
+                "Explains need for Lumbar Puncture (xanthochromia test) if CT is normal after 12 hours"
+            ],
+            "patient_safety": [
+                "Never discharges a thunderclap headache without ruling out SAH",
+                "Refers immediately to neurosurgery/stroke team upon confirmation"
+            ]
+        }
+    },
+    {
+        "id": "osce-05",
+        "title": "Station 5: Acute Lower Abdominal Pain (Liam Gallagher)",
+        "specialty": "General Surgery",
+        "patient_name": "Liam Gallagher",
+        "patient_age": 19,
+        "patient_gender": "Male",
+        "vital_signs": "BP 122/76 mmHg, HR 104 bpm, RR 20/min, SpO2 99%, Temp 38.2\u00b0C",
+        "candidate_brief": "Liam Gallagher, a 19-year-old student, presents with severe abdominal pain that started around his belly button yesterday and has now shifted to his right lower side. Take a focused history, propose differentials, and explain surgical management.",
+        "patient_brief": {
+            "personality": "Lying still with knees bent, groaning on movement or coughing.",
+            "chief_complaint": "Every time the stretcher bumps or I cough, my right groin feels like it is tearing.",
+            "history_of_present_illness": "Started 18 hours ago as a dull periumbilical ache. Over the last 6 hours, shifted to the right iliac fossa and became sharp and constant.",
+            "associated_symptoms": "Anorexic (cannot look at food), vomited once, low-grade fever.",
+            "past_medical_history": "Nil significant. No previous surgeries.",
+            "medications": "Took 2 paracetamol tablets 4 hours ago with minimal relief.",
+            "social_history": "First-year university student. Does not smoke, drinks occasionally at weekends.",
+            "family_history": "No major bowel disease.",
+            "key_concerns": "'Doctor, is my appendix going to burst? Do I need an operation today?'"
+        },
+        "marking_scheme": {
+            "communication_skills": [
+                "Demonstrates empathy towards acute pain and orders prompt analgesia",
+                "Explains the nature of surgical consent and appendectomy simply",
+                "Answers student's concerns about surgery and university exams"
+            ],
+            "history_taking": [
+                "Characterizes pain migration (visceral periumbilical to somatic right iliac fossa)",
+                "Checks systemic signs: anorexia ('hamburger sign'), low grade fever, nausea",
+                "Excludes differentials: urinary tract symptoms, testicular pain, bowel habit changes"
+            ],
+            "clinical_judgment": [
+                "Diagnoses Acute Appendicitis as top differential",
+                "Plans pre-operative workup: FBC (neutrophilic leukocytosis), CRP, U&Es, Urinalysis, Ultrasound/CT",
+                "Keeps patient nil-by-mouth (NPO), starts IV fluids, analgesia, and surgical referral"
+            ],
+            "patient_safety": [
+                "Recognizes signs of peritonitis / perforation risk if untreated"
+            ]
+        }
+    }
+]

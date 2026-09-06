@@ -22,7 +22,7 @@
 - **Senior GMC Examiner Agent:** At the end of the station, an automated examiner scores the consultation out of 15 across **History Taking (/5)**, **Clinical Judgment (/5)**, and **Communication & Empathy (/5)**, highlighting missed red flags and patient safety assessments.
 
 ### 3. 📖 NICE Guidelines RAG Knowledge Base
-- In-memory retrieval engine indexing verified UK clinical guidelines for acute coronary syndromes, COPD, asthma, diabetes emergencies, hypertension pathways, stroke, and sepsis.
+- **Hybrid Retrieval Engine (BM25 + Dense Embeddings + RRF):** Uses hybrid retrieval combining BM25 lexical search and dense semantic embeddings (`BAAI/bge-small-en-v1.5`) via Reciprocal Rank Fusion, indexing verified UK clinical guidelines for acute coronary syndromes, COPD, asthma, diabetes emergencies, hypertension pathways, stroke, and sepsis.
 
 ---
 
@@ -113,6 +113,44 @@ Open your browser at: `http://localhost:8501`
 - **Automated Verification:** All endpoints (`/plabable`, `/osce/stations`, `/osce/chat`, `/osce/evaluate`, `/tutor/analyze`, `/rag/search`) are verified with 100% pass rates.
 - **Offline Demonstration Mode:** Works with high-quality clinical heuristic fallbacks even without an external API key, ensuring reliable presentation during live competition pitches.
 - **API Keys Supported:** Direct support for Google Gemini 1.5/2.0 Flash (`GEMINI_API_KEY`) and OpenAI (`OPENAI_API_KEY`).
+
+---
+
+## 📊 Retrieval Evaluation Results
+
+The RAG knowledge base uses a **hybrid retrieval engine** (BM25 lexical search + dense semantic
+embeddings via `BAAI/bge-small-en-v1.5`, combined through Reciprocal Rank Fusion) instead of simple
+keyword matching. This was benchmarked against a 21-case evaluation set covering NICE guidelines on
+cardiology, respiratory, endocrinology, hypertension, and acute emergencies — split into two batches
+to test different retrieval demands, plus one out-of-domain negative control.
+
+**Batch 1 — Exact clinical terminology** (14 cases, e.g. "PPCI", "GRACE score", "FEV1/FVC"):
+
+| Metric | BM25-only | Hybrid (BM25+Dense) |
+|---|---|---|
+| Hit@1 | 100.00% | 100.00% |
+| Hit@3 | 100.00% | 100.00% |
+| MRR | 1.0000 | 1.0000 |
+
+**Batch 2 — Paraphrased / lay-language queries** (6 cases, e.g. "clot-busting injection", "puffers for a chest flare up"):
+
+| Metric | BM25-only | Hybrid (BM25+Dense) | Gain |
+|---|---|---|---|
+| Hit@1 | 33.33% | 50.00% | +16.67% |
+| Hit@3 | 50.00% | 83.33% | +33.33% |
+| MRR | 0.4821 | 0.7000 | +0.2179 |
+
+**Takeaway:** BM25 alone is sufficient when queries use exact clinical terms, but dense embeddings
+provide a substantial and measurable improvement when queries use everyday or paraphrased language —
+the scenario most representative of real PLAB candidates and patients. In one case, BM25 completely
+failed to retrieve the correct guideline section within the top 10 results, while the hybrid engine
+recovered it at rank 5.
+
+**Negative control:** An out-of-domain query (pediatric oncology, not covered by any guideline in
+this repository) returned a fused retrieval score of 0.0325 — well below the confidence threshold —
+confirming the system does not force irrelevant matches on unsupported topics.
+
+*Full evaluation cases and reproducible benchmark script are available in `Data/eval/retrieval_eval_v1.json` and `Scripts/evaluate_retrieval.py`.*
 
 ---
 

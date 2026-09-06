@@ -1,7 +1,7 @@
 {
   "eval_set_id": "eval_nice_guidelines_v1",
-  "version": "1.0.0",
-  "description": "Evaluation dataset of 15 clinical queries based directly on NICE Guidelines content in Data/Guidelines/. Includes 14 answerable clinical queries across cardiology, respiratory, endocrinology, nephrology/hypertension, and acute emergencies, plus 1 unanswerable negative control.",
+  "version": "1.1.0",
+  "description": "Evaluation dataset of 21 test cases based directly on NICE Guidelines in Data/Guidelines/. Contains Batch 1 (TC-001 to TC-014: exact clinical terminology across cardiology, respiratory, endocrinology, nephrology/hypertension, and acute emergencies; TC-015: unanswerable negative control) and Batch 2 (TC-016 to TC-021: paraphrased, lay-language, and synonym-heavy queries specifically designed to test dense semantic retrieval and vocabulary mismatch against BM25).",
   "cases": [
     {
       "id": "TC-001",
@@ -137,6 +137,60 @@
       "answerable": false,
       "clinical_specialty": "Pediatric Oncology",
       "notes": "Negative control: Not covered by the five adult acute medical guidelines in this repository."
+    },
+    {
+      "id": "TC-016",
+      "query": "When do doctors rush someone to have their blocked heart artery stretched open after a severe sudden cardiac attack?",
+      "gold_document_id": "doc_nice_acs_chest_pain",
+      "gold_section": "Immediate Emergency Management of STEMI",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "Paraphrased/lay query for PPCI within 120 minutes in acute STEMI. Tests dense matching on blocked heart artery stretched open vs PPCI."
+    },
+    {
+      "id": "TC-017",
+      "query": "How long after brain stroke symptoms appear can patients still be given the clot-busting injection to dissolve the blockage?",
+      "gold_document_id": "doc_nice_acute_emergencies",
+      "gold_section": "Acute Stroke & TIA [NG128]",
+      "answerable": true,
+      "clinical_specialty": "Neurology / Acute Medicine",
+      "notes": "Paraphrased query for Alteplase thrombolysis within 4.5 hours of symptom onset in acute ischemic stroke."
+    },
+    {
+      "id": "TC-018",
+      "query": "Which emergency inhaled breathing medications and puffers should be given when an elderly chronic smoker has a sudden severe chest flare up?",
+      "gold_document_id": "doc_nice_copd_asthma",
+      "gold_section": "Acute Exacerbation of COPD (AECOPD)",
+      "answerable": true,
+      "clinical_specialty": "Respiratory",
+      "notes": "Paraphrased query for nebulised salbutamol and ipratropium bronchodilators in acute exacerbation of COPD."
+    },
+    {
+      "id": "TC-019",
+      "query": "Recommended blood sugar control goals and numbers for adults newly diagnosed with high sugar who are only watching their diet",
+      "gold_document_id": "doc_nice_diabetes_type2",
+      "gold_section": "Glycemic Targets and Monitoring",
+      "answerable": true,
+      "clinical_specialty": "Endocrinology",
+      "notes": "Paraphrased query for HbA1c target of 48 mmol/mol (6.5%) with lifestyle in type 2 diabetes."
+    },
+    {
+      "id": "TC-020",
+      "query": "Which first choice daily blood pressure tablet is recommended for older individuals or people of black heritage?",
+      "gold_document_id": "doc_nice_hypertension",
+      "gold_section": "Pharmacological Stepwise Pathway",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "Paraphrased query for Step 1 Calcium Channel Blocker (CCB) in patients aged >= 55 or Black African origin."
+    },
+    {
+      "id": "TC-021",
+      "query": "What six lifesaving actions must hospital staff take within the very first hour when a severe bacterial infection spreads into the blood?",
+      "gold_document_id": "doc_nice_acute_emergencies",
+      "gold_section": "Sepsis in Adults [NG51 - Sepsis Six Pathway]",
+      "answerable": true,
+      "clinical_specialty": "Emergency Medicine",
+      "notes": "Paraphrased query for Sepsis Six pathway within 1 hour of recognition."
     }
   ]
 }

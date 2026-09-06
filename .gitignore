@@ -18,3 +18,4 @@ venv/
 # Temporary PDFs or large raw files
 Data/Plabable/Topics/*.pdf
 Data/Plabable/Topics/txts/
+*.npy

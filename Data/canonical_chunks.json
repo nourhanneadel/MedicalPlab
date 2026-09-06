@@ -1,0 +1,420 @@
+[
+  {
+    "chunk_id": "doc_nice_acs_chest_pain_chunk_0",
+    "document_id": "doc_nice_acs_chest_pain",
+    "source_id": "nice_guidelines",
+    "block_index": 0,
+    "section_path": [
+      "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+      "Overview & Context"
+    ],
+    "heading": "Overview & Context",
+    "text": "# NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain\nPublished: November 2020 | Last updated: 2023",
+    "content_sha256": "7d6b5ce20eb502f29e7d9b2bc2a678c8973d15b1545f44fce753d72ab8d9f4d8",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acs_chest_pain.md#Overview & Context",
+    "title": "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+    "section": "Overview & Context",
+    "token_count": 15,
+    "metadata": {
+      "source_file": "nice_acs_chest_pain.md",
+      "doc_id": "doc_nice_acs_chest_pain"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acs_chest_pain_chunk_1",
+    "document_id": "doc_nice_acs_chest_pain",
+    "source_id": "nice_guidelines",
+    "block_index": 1,
+    "section_path": [
+      "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+      "Initial Assessment of Suspected Cardiac Chest Pain"
+    ],
+    "heading": "Initial Assessment of Suspected Cardiac Chest Pain",
+    "text": "## Initial Assessment of Suspected Cardiac Chest Pain\n- Take a resting 12-lead ECG as soon as possible.\n- Do not rule out ACS simply because chest pain is atypical or relieved by sublingual nitrates.\n- Key signs of STEMI: ST-segment elevation of ≥1 mm in two or more contiguous limb leads or ≥2 mm in contiguous chest leads, or new LBBB.",
+    "content_sha256": "ecb1a690fff7d39a5b17d2e1ec94a043d80c7ba7c9c064e1505afd0f6f86d49b",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acs_chest_pain.md#Initial Assessment of Suspected Cardiac Chest Pain",
+    "title": "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+    "section": "Initial Assessment of Suspected Cardiac Chest Pain",
+    "token_count": 60,
+    "metadata": {
+      "source_file": "nice_acs_chest_pain.md",
+      "doc_id": "doc_nice_acs_chest_pain"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acs_chest_pain_chunk_2",
+    "document_id": "doc_nice_acs_chest_pain",
+    "source_id": "nice_guidelines",
+    "block_index": 2,
+    "section_path": [
+      "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+      "Immediate Emergency Management of STEMI"
+    ],
+    "heading": "Immediate Emergency Management of STEMI",
+    "text": "## Immediate Emergency Management of STEMI\n1. **Dual Antiplatelet Therapy (DAPT):**\n   - Aspirin: 300 mg loading dose orally (unless allergic).\n   - Second antiplatelet: Ticagrelor 180 mg (preferred) or Prasugrel 60 mg or Clopidogrel 300-600 mg.\n2. **Reperfusion Therapy:**\n   - Offer immediate coronary angiography with a view to primary PCI if presentation is within 12 hours of symptom onset and PCI can be delivered within 120 minutes of when fibrinolysis could have been given.\n   - If primary PCI cannot be delivered within 120 minutes, offer fibrinolysis immediately.\n3. **Analgesia & Oxygen:**\n   - Offer IV opioids (diamorphine or morphine) titrated to relieve pain.\n   - Supplemental oxygen only if SpO2 < 94% on room air (or < 88% in COPD/hypercapnic respiratory failure risk).",
+    "content_sha256": "050a2991f7bb25455d758308cfaab0ea70b4a8c3caaeb31105db8ec67075c486",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acs_chest_pain.md#Immediate Emergency Management of STEMI",
+    "title": "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+    "section": "Immediate Emergency Management of STEMI",
+    "token_count": 112,
+    "metadata": {
+      "source_file": "nice_acs_chest_pain.md",
+      "doc_id": "doc_nice_acs_chest_pain"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acs_chest_pain_chunk_3",
+    "document_id": "doc_nice_acs_chest_pain",
+    "source_id": "nice_guidelines",
+    "block_index": 3,
+    "section_path": [
+      "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+      "Management of NSTEMI and Unstable Angina"
+    ],
+    "heading": "Management of NSTEMI and Unstable Angina",
+    "text": "## Management of NSTEMI and Unstable Angina\n- Assess baseline risk of future adverse cardiovascular events using a validated tool such as GRACE score.\n- Offer fondaparinux to patients without a high bleeding risk.\n- Perform coronary angiography within 72 hours for patients with intermediate or high risk (GRACE score > 3%).",
+    "content_sha256": "1251281767d5011ac6e697f6f2ed168ebe969b792b4b2fcd194afb82eb250dc4",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acs_chest_pain.md#Management of NSTEMI and Unstable Angina",
+    "title": "NICE Guideline [NG185]: Acute Coronary Syndromes (ACS) & Chest Pain",
+    "section": "Management of NSTEMI and Unstable Angina",
+    "token_count": 47,
+    "metadata": {
+      "source_file": "nice_acs_chest_pain.md",
+      "doc_id": "doc_nice_acs_chest_pain"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acute_emergencies_chunk_0",
+    "document_id": "doc_nice_acute_emergencies",
+    "source_id": "nice_guidelines",
+    "block_index": 0,
+    "section_path": [
+      "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+      "Overview & Context"
+    ],
+    "heading": "Overview & Context",
+    "text": "# NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+    "content_sha256": "b0e7e99197ef9baa5ba323898969877f1f58ba6266677a775f70102b3e721e1e",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acute_emergencies.md#Overview & Context",
+    "title": "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+    "section": "Overview & Context",
+    "token_count": 6,
+    "metadata": {
+      "source_file": "nice_acute_emergencies.md",
+      "doc_id": "doc_nice_acute_emergencies"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acute_emergencies_chunk_1",
+    "document_id": "doc_nice_acute_emergencies",
+    "source_id": "nice_guidelines",
+    "block_index": 1,
+    "section_path": [
+      "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+      "Acute Stroke & TIA [NG128]"
+    ],
+    "heading": "Acute Stroke & TIA [NG128]",
+    "text": "## Acute Stroke & TIA [NG128]\n- Exclude hypoglycemia immediately (finger-prick glucose).\n- Use ROSIER tool to identify acute stroke.\n- **Immediate non-contrast Brain CT:** within 1 hour of arrival for patients eligible for thrombolysis/thrombectomy.\n- **Thrombolysis (Alteplase):** Administer within 4.5 hours of symptom onset if hemorrhage is excluded and no contraindications (recent surgery, active bleeding, INR > 1.7).\n- **Mechanical Thrombectomy:** within 6 hours of symptom onset for confirmed anterior circulation large vessel occlusion.\n- **Aspirin 300 mg:** Start 24 hours after thrombolysis or immediately if thrombolysis not indicated once hemorrhage excluded.",
+    "content_sha256": "e03020eb056d2e4b750d751bb792225283f4f669e99aa5a86a87af9df36b71cd",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acute_emergencies.md#Acute Stroke & TIA [NG128]",
+    "title": "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+    "section": "Acute Stroke & TIA [NG128]",
+    "token_count": 89,
+    "metadata": {
+      "source_file": "nice_acute_emergencies.md",
+      "doc_id": "doc_nice_acute_emergencies"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_acute_emergencies_chunk_2",
+    "document_id": "doc_nice_acute_emergencies",
+    "source_id": "nice_guidelines",
+    "block_index": 2,
+    "section_path": [
+      "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+      "Sepsis in Adults [NG51 - Sepsis Six Pathway]"
+    ],
+    "heading": "Sepsis in Adults [NG51 - Sepsis Six Pathway]",
+    "text": "## Sepsis in Adults [NG51 - Sepsis Six Pathway]\n- Give within 1 hour of recognition:\n  1. Give oxygen to maintain SpO2 94-98% (88-92% in COPD).\n  2. Take blood cultures before antibiotics.\n  3. Give empiric broad-spectrum IV antibiotics.\n  4. Give IV fluid bolus (500 ml Hartmann's or Normal Saline over <15 mins if lactate > 2 or hypotensive).\n  5. Check serial lactate and blood gas.\n  6. Measure accurate hourly urine output (catheterisation).",
+    "content_sha256": "425a29ca2c66a478cc15c0a3be1fa39cde89d4ddd4a0bc72a56b01a39516e9c6",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_acute_emergencies.md#Sepsis in Adults [NG51 - Sepsis Six Pathway]",
+    "title": "NICE Guidelines: Acute Neurological & Sepsis Emergencies",
+    "section": "Sepsis in Adults [NG51 - Sepsis Six Pathway]",
+    "token_count": 72,
+    "metadata": {
+      "source_file": "nice_acute_emergencies.md",
+      "doc_id": "doc_nice_acute_emergencies"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_copd_asthma_chunk_0",
+    "document_id": "doc_nice_copd_asthma",
+    "source_id": "nice_guidelines",
+    "block_index": 0,
+    "section_path": [
+      "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+      "Overview & Context"
+    ],
+    "heading": "Overview & Context",
+    "text": "# NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management\nPublished: 2019 - 2024",
+    "content_sha256": "19534fb831983d8d368441daa515fd9244e1d436d2827f5a815de0d6177c862b",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_copd_asthma.md#Overview & Context",
+    "title": "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+    "section": "Overview & Context",
+    "token_count": 11,
+    "metadata": {
+      "source_file": "nice_copd_asthma.md",
+      "doc_id": "doc_nice_copd_asthma"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_copd_asthma_chunk_1",
+    "document_id": "doc_nice_copd_asthma",
+    "source_id": "nice_guidelines",
+    "block_index": 1,
+    "section_path": [
+      "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+      "Diagnosis and Assessment of COPD"
+    ],
+    "heading": "Diagnosis and Assessment of COPD",
+    "text": "## Diagnosis and Assessment of COPD\n- Consider a diagnosis of COPD in patients aged >35 years who have a risk factor (usually smoking) and recurrent cough, sputum, dyspnea, or frequent winter bronchitis.\n- Post-bronchodilator spirometry showing FEV1/FVC < 0.70 confirms persistent airflow obstruction.",
+    "content_sha256": "b54c33ce1252bfd90e8564cbdbb3aa46a941a6bf150d4662404419896301e07c",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_copd_asthma.md#Diagnosis and Assessment of COPD",
+    "title": "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+    "section": "Diagnosis and Assessment of COPD",
+    "token_count": 43,
+    "metadata": {
+      "source_file": "nice_copd_asthma.md",
+      "doc_id": "doc_nice_copd_asthma"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_copd_asthma_chunk_2",
+    "document_id": "doc_nice_copd_asthma",
+    "source_id": "nice_guidelines",
+    "block_index": 2,
+    "section_path": [
+      "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+      "Acute Exacerbation of COPD (AECOPD)"
+    ],
+    "heading": "Acute Exacerbation of COPD (AECOPD)",
+    "text": "## Acute Exacerbation of COPD (AECOPD)\n1. **Controlled Oxygen Therapy:** Target SpO2 88-92% if hypercapnic respiratory failure risk is suspected (via 24% or 28% Venturi mask).\n2. **Bronchodilators:** Nebulised salbutamol (2.5-5 mg) + ipratropium bromide (500 micrograms).\n3. **Corticosteroids:** Oral prednisolone 30 mg once daily for 5 days.\n4. **Antibiotics:** Amoxicillin, doxycycline, or clarithromycin if purulent sputum or increased volume and breathlessness.",
+    "content_sha256": "f865b7550a3567f911856fe99cb03c9741b9c4f5ace664c1172e1ae0ab72a88a",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_copd_asthma.md#Acute Exacerbation of COPD (AECOPD)",
+    "title": "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+    "section": "Acute Exacerbation of COPD (AECOPD)",
+    "token_count": 63,
+    "metadata": {
+      "source_file": "nice_copd_asthma.md",
+      "doc_id": "doc_nice_copd_asthma"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_copd_asthma_chunk_3",
+    "document_id": "doc_nice_copd_asthma",
+    "source_id": "nice_guidelines",
+    "block_index": 3,
+    "section_path": [
+      "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+      "Acute Severe Asthma in Adults (BTS/NICE Criteria)"
+    ],
+    "heading": "Acute Severe Asthma in Adults (BTS/NICE Criteria)",
+    "text": "## Acute Severe Asthma in Adults (BTS/NICE Criteria)\n- **Moderate:** Increasing symptoms, PEF 50-75% best/predicted, no features of acute severe.\n- **Acute Severe Asthma:**\n  - PEF 33-50% best or predicted.\n  - Respiratory rate ≥ 25 breaths/min.\n  - Heart rate ≥ 110 beats/min.\n  - Inability to complete sentences in one breath.\n- **Life-Threatening Features:**\n  - PEF < 33%, SpO2 < 92%, PaO2 < 8 kPa, \"normal\" PaCO2 (4.6-6.0 kPa indicates exhaustion).\n  - Silent chest, cyanosis, feeble respiratory effort, bradycardia, confusion, exhaustion.\n- **Immediate Treatment:** High-flow 100% oxygen via non-rebreathe mask, high-dose nebulised beta-2 agonists (salbutamol 5 mg driven by oxygen), oral prednisolone 40-50 mg or IV hydrocortisone 100 mg, IV magnesium sulfate (1.2-2 g over 20 mins) if severe or refractory.",
+    "content_sha256": "c976ea254f954811feca78b7ee360fb130ff125246fe14210343d5cd7732d490",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_copd_asthma.md#Acute Severe Asthma in Adults (BTS/NICE Criteria)",
+    "title": "NICE Guideline [NG115 & NG80]: COPD & Acute Asthma Management",
+    "section": "Acute Severe Asthma in Adults (BTS/NICE Criteria)",
+    "token_count": 121,
+    "metadata": {
+      "source_file": "nice_copd_asthma.md",
+      "doc_id": "doc_nice_copd_asthma"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_diabetes_type2_chunk_0",
+    "document_id": "doc_nice_diabetes_type2",
+    "source_id": "nice_guidelines",
+    "block_index": 0,
+    "section_path": [
+      "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+      "Overview & Context"
+    ],
+    "heading": "Overview & Context",
+    "text": "# NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management\nUpdated: June 2023",
+    "content_sha256": "9b90184943b9bd0845dff71a3fc404786555ab43a59d5ebe1e62115f0c9cc47b",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_diabetes_type2.md#Overview & Context",
+    "title": "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+    "section": "Overview & Context",
+    "token_count": 12,
+    "metadata": {
+      "source_file": "nice_diabetes_type2.md",
+      "doc_id": "doc_nice_diabetes_type2"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_diabetes_type2_chunk_1",
+    "document_id": "doc_nice_diabetes_type2",
+    "source_id": "nice_guidelines",
+    "block_index": 1,
+    "section_path": [
+      "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+      "Glycemic Targets and Monitoring"
+    ],
+    "heading": "Glycemic Targets and Monitoring",
+    "text": "## Glycemic Targets and Monitoring\n- Individualize HbA1c target:\n  - 48 mmol/mol (6.5%) with lifestyle or single drug not associated with hypoglycemia.\n  - 53 mmol/mol (7.0%) if drug therapy includes sulfonylurea or insulin.\n  - Relax targets in frail older adults.",
+    "content_sha256": "ad092f4c3623f7903829258de1ac810f731ba249e0859e43c744e4a1439dedeb",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_diabetes_type2.md#Glycemic Targets and Monitoring",
+    "title": "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+    "section": "Glycemic Targets and Monitoring",
+    "token_count": 39,
+    "metadata": {
+      "source_file": "nice_diabetes_type2.md",
+      "doc_id": "doc_nice_diabetes_type2"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_diabetes_type2_chunk_2",
+    "document_id": "doc_nice_diabetes_type2",
+    "source_id": "nice_guidelines",
+    "block_index": 2,
+    "section_path": [
+      "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+      "First-Line Pharmacotherapy"
+    ],
+    "heading": "First-Line Pharmacotherapy",
+    "text": "## First-Line Pharmacotherapy\n- **Standard First-Line:** Metformin (titrate gradually to reduce GI side effects).\n- **If chronic heart failure or established atherosclerotic cardiovascular disease (ASCVD):**\n  - Offer Metformin + SGLT2 inhibitor (e.g., Dapagliflozin, Empagliflozin) with proven CV benefit.\n- **If Metformin is contraindicated or not tolerated:**\n  - DPP-4 inhibitor (gliptin), Pioglitazone, Sulfonylurea, or SGLT2 inhibitor monotherapy.",
+    "content_sha256": "d38a5fcb4ac177442e4d49b8ac74a6b5ca65c72d89b1940e491fbee291e87d81",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_diabetes_type2.md#First-Line Pharmacotherapy",
+    "title": "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+    "section": "First-Line Pharmacotherapy",
+    "token_count": 53,
+    "metadata": {
+      "source_file": "nice_diabetes_type2.md",
+      "doc_id": "doc_nice_diabetes_type2"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_diabetes_type2_chunk_3",
+    "document_id": "doc_nice_diabetes_type2",
+    "source_id": "nice_guidelines",
+    "block_index": 3,
+    "section_path": [
+      "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+      "Acute Diabetic Emergencies"
+    ],
+    "heading": "Acute Diabetic Emergencies",
+    "text": "## Acute Diabetic Emergencies\n- **Diabetic Ketoacidosis (DKA):** Diagnostic triad = Ketones > 3.0 mmol/L, Blood Glucose > 11.0 mmol/L (or known diabetes), Venous pH < 7.3 or Bicarbonate < 15 mmol/L. Management: IV fluids (0.9% Normal Saline), fixed-rate IV insulin infusion (0.1 units/kg/h), potassium replacement once K+ < 5.5 mmol/L.\n- **Hyperosmolar Hyperglycemic State (HHS):** Severe hyperglycemia (> 30 mmol/L), high serum osmolality (> 320 mOsm/kg), hypovolemia, absence of significant ketoacidosis. Management: Gradual IV 0.9% NaCl rehydration over 48h, normalize osmolality gradually to prevent cerebral edema.",
+    "content_sha256": "652266a59917990f879bb2cf59afc1c338be6f85d35c766c40e8ef90f0d0d966",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_diabetes_type2.md#Acute Diabetic Emergencies",
+    "title": "NICE Guideline [NG28]: Type 2 Diabetes in Adults: Management",
+    "section": "Acute Diabetic Emergencies",
+    "token_count": 92,
+    "metadata": {
+      "source_file": "nice_diabetes_type2.md",
+      "doc_id": "doc_nice_diabetes_type2"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_hypertension_chunk_0",
+    "document_id": "doc_nice_hypertension",
+    "source_id": "nice_guidelines",
+    "block_index": 0,
+    "section_path": [
+      "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+      "Overview & Context"
+    ],
+    "heading": "Overview & Context",
+    "text": "# NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management\nPublished: August 2019 | Updated: November 2023",
+    "content_sha256": "feef49688b6024ad57b270094684cc9ecc2e8e56d455e52ffdb651c9f89ba82e",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_hypertension.md#Overview & Context",
+    "title": "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+    "section": "Overview & Context",
+    "token_count": 14,
+    "metadata": {
+      "source_file": "nice_hypertension.md",
+      "doc_id": "doc_nice_hypertension"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_hypertension_chunk_1",
+    "document_id": "doc_nice_hypertension",
+    "source_id": "nice_guidelines",
+    "block_index": 1,
+    "section_path": [
+      "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+      "Diagnosis Criteria"
+    ],
+    "heading": "Diagnosis Criteria",
+    "text": "## Diagnosis Criteria\n- Clinic blood pressure ≥ 140/90 mmHg: Offer Ambulatory Blood Pressure Monitoring (ABPM) or Home BPM (HBPM) to confirm diagnosis.\n- **Stage 1 Hypertension:** Clinic BP ≥ 140/90 mmHg AND daytime ABPM/HBPM ≥ 135/85 mmHg.\n- **Stage 2 Hypertension:** Clinic BP ≥ 160/100 mmHg AND daytime ABPM/HBPM ≥ 150/95 mmHg.\n- **Stage 3 (Severe) Hypertension:** Clinic systolic BP ≥ 180 mmHg OR diastolic BP ≥ 120 mmHg.",
+    "content_sha256": "e71c8ed30ed8562991e6d3415a7387ec3887b0cab2f5fcff017c55776b531ff1",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_hypertension.md#Diagnosis Criteria",
+    "title": "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+    "section": "Diagnosis Criteria",
+    "token_count": 65,
+    "metadata": {
+      "source_file": "nice_hypertension.md",
+      "doc_id": "doc_nice_hypertension"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_hypertension_chunk_2",
+    "document_id": "doc_nice_hypertension",
+    "source_id": "nice_guidelines",
+    "block_index": 2,
+    "section_path": [
+      "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+      "Treatment Thresholds"
+    ],
+    "heading": "Treatment Thresholds",
+    "text": "## Treatment Thresholds\n- Treat Stage 1 if < 80 years old with target organ damage, established CVD, renal disease, diabetes, or 10-year QRISK score ≥ 10%.\n- Treat Stage 2 at any age.",
+    "content_sha256": "67a830385d526628f079abdc78055fb900022d315a555ba6efce7cf39a1626d4",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_hypertension.md#Treatment Thresholds",
+    "title": "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+    "section": "Treatment Thresholds",
+    "token_count": 30,
+    "metadata": {
+      "source_file": "nice_hypertension.md",
+      "doc_id": "doc_nice_hypertension"
+    }
+  },
+  {
+    "chunk_id": "doc_nice_hypertension_chunk_3",
+    "document_id": "doc_nice_hypertension",
+    "source_id": "nice_guidelines",
+    "block_index": 3,
+    "section_path": [
+      "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+      "Pharmacological Stepwise Pathway"
+    ],
+    "heading": "Pharmacological Stepwise Pathway",
+    "text": "## Pharmacological Stepwise Pathway\n- **Step 1:**\n  - Age < 55 and not of Black African or African-Caribbean origin: ACE inhibitor (e.g., Ramipril) or Angiotensin Receptor Blocker (ARB, e.g., Losartan).\n  - Age ≥ 55 or of Black African or African-Caribbean origin: Calcium Channel Blocker (CCB, e.g., Amlodipine).\n- **Step 2:** Combine ACEi/ARB + CCB (or Thiazide-like diuretic, e.g., Indapamide).\n- **Step 3:** Triple therapy: ACEi/ARB + CCB + Thiazide-like diuretic.\n- **Step 4 (Resistant):** Add low-dose Spironolactone if serum K+ ≤ 4.5 mmol/L; or Alpha/Beta-blocker if K+ > 4.5 mmol/L.",
+    "content_sha256": "7bc5569e78dd992aebc8de0600b73f4e5c774f420abf331a9e86656cd252b5a5",
+    "provenance_type": "local_markdown",
+    "source_locator": "nice_hypertension.md#Pharmacological Stepwise Pathway",
+    "title": "NICE Guideline [NG136]: Hypertension in Adults: Diagnosis & Management",
+    "section": "Pharmacological Stepwise Pathway",
+    "token_count": 93,
+    "metadata": {
+      "source_file": "nice_hypertension.md",
+      "doc_id": "doc_nice_hypertension"
+    }
+  }
+]

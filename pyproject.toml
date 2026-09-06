@@ -8,5 +8,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
-    "pdfplumber"
+    "pdfplumber",
+    "rank-bm25",
+    "sentence-transformers"
 ]

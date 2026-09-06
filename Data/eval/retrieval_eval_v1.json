@@ -1,0 +1,142 @@
+{
+  "eval_set_id": "eval_nice_guidelines_v1",
+  "version": "1.0.0",
+  "description": "Evaluation dataset of 15 clinical queries based directly on NICE Guidelines content in Data/Guidelines/. Includes 14 answerable clinical queries across cardiology, respiratory, endocrinology, nephrology/hypertension, and acute emergencies, plus 1 unanswerable negative control.",
+  "cases": [
+    {
+      "id": "TC-001",
+      "query": "When should primary PCI be delivered for acute STEMI according to NICE?",
+      "gold_document_id": "doc_nice_acs_chest_pain",
+      "gold_section": "Immediate Emergency Management of STEMI",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "PPCI should be offered within 12 hours of symptom onset if deliverable within 120 minutes."
+    },
+    {
+      "id": "TC-002",
+      "query": "What are the first-line medication options for Type 2 diabetes in patients with heart failure?",
+      "gold_document_id": "doc_nice_diabetes_type2",
+      "gold_section": "First-Line Pharmacotherapy",
+      "answerable": true,
+      "clinical_specialty": "Endocrinology",
+      "notes": "NICE recommends Metformin + SGLT2 inhibitor for patients with chronic heart failure or ASCVD."
+    },
+    {
+      "id": "TC-003",
+      "query": "Diagnostic criteria and PEF rate for acute severe asthma exacerbation in adults",
+      "gold_document_id": "doc_nice_copd_asthma",
+      "gold_section": "Acute Severe Asthma in Adults (BTS/NICE Criteria)",
+      "answerable": true,
+      "clinical_specialty": "Respiratory",
+      "notes": "PEF 33-50% predicted, RR >= 25, HR >= 110, inability to complete sentences."
+    },
+    {
+      "id": "TC-004",
+      "query": "Immediate 1 hour bundle protocol for sepsis six in adults",
+      "gold_document_id": "doc_nice_acute_emergencies",
+      "gold_section": "Sepsis in Adults [NG51 - Sepsis Six Pathway]",
+      "answerable": true,
+      "clinical_specialty": "Emergency Medicine",
+      "notes": "Oxygen, blood cultures, IV antibiotics, IV fluids, serial lactate, hourly urine output."
+    },
+    {
+      "id": "TC-005",
+      "query": "What are the blood pressure thresholds for diagnosing Stage 1 and Stage 2 hypertension on ABPM?",
+      "gold_document_id": "doc_nice_hypertension",
+      "gold_section": "Diagnosis Criteria",
+      "answerable": true,
+      "clinical_specialty": "Cardiology / Nephrology",
+      "notes": "Stage 1 daytime ABPM >= 135/85; Stage 2 daytime ABPM >= 150/95."
+    },
+    {
+      "id": "TC-006",
+      "query": "Time window for intravenous alteplase thrombolysis in acute ischemic stroke",
+      "gold_document_id": "doc_nice_acute_emergencies",
+      "gold_section": "Acute Stroke & TIA [NG128]",
+      "answerable": true,
+      "clinical_specialty": "Neurology",
+      "notes": "Thrombolysis administered within 4.5 hours of symptom onset if hemorrhage excluded."
+    },
+    {
+      "id": "TC-007",
+      "query": "Diagnostic triad and initial fluid management for diabetic ketoacidosis DKA",
+      "gold_document_id": "doc_nice_diabetes_type2",
+      "gold_section": "Acute Diabetic Emergencies",
+      "answerable": true,
+      "clinical_specialty": "Endocrinology / Acute Medicine",
+      "notes": "Ketones > 3.0, Glucose > 11.0, pH < 7.3 or Bicarb < 15; IV 0.9% NaCl."
+    },
+    {
+      "id": "TC-008",
+      "query": "What spirometry FEV1 to FVC ratio defines persistent airflow obstruction in COPD?",
+      "gold_document_id": "doc_nice_copd_asthma",
+      "gold_section": "Diagnosis and Assessment of COPD",
+      "answerable": true,
+      "clinical_specialty": "Respiratory",
+      "notes": "Post-bronchodilator FEV1/FVC < 0.70 confirms persistent airflow obstruction."
+    },
+    {
+      "id": "TC-009",
+      "query": "Step 1 antihypertensive drug of choice for patients aged under 55",
+      "gold_document_id": "doc_nice_hypertension",
+      "gold_section": "Pharmacological Stepwise Pathway",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "ACE inhibitor or ARB for age < 55 and not of Black African/Caribbean descent."
+    },
+    {
+      "id": "TC-010",
+      "query": "Target oxygen saturation range during acute exacerbation of COPD with hypercapnia risk",
+      "gold_document_id": "doc_nice_copd_asthma",
+      "gold_section": "Acute Exacerbation of COPD (AECOPD)",
+      "answerable": true,
+      "clinical_specialty": "Respiratory",
+      "notes": "Target SpO2 88-92% via 24% or 28% Venturi mask."
+    },
+    {
+      "id": "TC-011",
+      "query": "Risk stratification with GRACE score and timing of coronary angiography in NSTEMI",
+      "gold_document_id": "doc_nice_acs_chest_pain",
+      "gold_section": "Management of NSTEMI and Unstable Angina",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "Coronary angiography within 72 hours for intermediate or high risk (GRACE > 3%)."
+    },
+    {
+      "id": "TC-012",
+      "query": "Target HbA1c for adults with type 2 diabetes managed on lifestyle alone",
+      "gold_document_id": "doc_nice_diabetes_type2",
+      "gold_section": "Glycemic Targets and Monitoring",
+      "answerable": true,
+      "clinical_specialty": "Endocrinology",
+      "notes": "48 mmol/mol (6.5%) with lifestyle or single drug without hypoglycemia risk."
+    },
+    {
+      "id": "TC-013",
+      "query": "Step 4 resistant hypertension treatment pathway based on serum potassium",
+      "gold_document_id": "doc_nice_hypertension",
+      "gold_section": "Pharmacological Stepwise Pathway",
+      "answerable": true,
+      "clinical_specialty": "Cardiology / Nephrology",
+      "notes": "Add low-dose Spironolactone if K <= 4.5 mmol/L; or Alpha/Beta-blocker if K > 4.5."
+    },
+    {
+      "id": "TC-014",
+      "query": "Initial ECG findings and contiguous lead elevation criteria in acute STEMI",
+      "gold_document_id": "doc_nice_acs_chest_pain",
+      "gold_section": "Initial Assessment of Suspected Cardiac Chest Pain",
+      "answerable": true,
+      "clinical_specialty": "Cardiology",
+      "notes": "ST elevation >= 1mm in 2+ limb leads or >= 2mm in contiguous chest leads, or new LBBB."
+    },
+    {
+      "id": "TC-015",
+      "query": "Surgical resection margin guidelines for pediatric Ewing sarcoma of the pelvic bone",
+      "gold_document_id": "none",
+      "gold_section": "none",
+      "answerable": false,
+      "clinical_specialty": "Pediatric Oncology",
+      "notes": "Negative control: Not covered by the five adult acute medical guidelines in this repository."
+    }
+  ]
+}

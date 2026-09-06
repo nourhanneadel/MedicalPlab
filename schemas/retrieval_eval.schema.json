@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medicalplab.org/schemas/retrieval_eval.schema.json",
+  "title": "RetrievalEvaluationSchema",
+  "description": "Schema for retrieval benchmark evaluation datasets and performance metrics reports.",
+  "type": "object",
+  "required": [
+    "eval_set_id",
+    "version",
+    "cases"
+  ],
+  "properties": {
+    "eval_set_id": {
+      "type": "string",
+      "description": "Identifier for this evaluation dataset, e.g. eval_nice_guidelines_v1"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the evaluation set, e.g. 1.0.0"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the clinical domain and test methodology"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "query",
+          "gold_document_id",
+          "gold_section",
+          "answerable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique test case identifier, e.g. TC-001"
+          },
+          "query": {
+            "type": "string",
+            "description": "Clinical search query formulated by a physician or candidate"
+          },
+          "gold_document_id": {
+            "type": "string",
+            "description": "Target document ID containing the ground truth answer, or 'none' if unanswerable"
+          },
+          "gold_section": {
+            "type": "string",
+            "description": "Target section heading containing the ground truth answer, or 'none' if unanswerable"
+          },
+          "gold_chunk_id": {
+            "type": "string",
+            "description": "Optional specific chunk ID if pre-mapped"
+          },
+          "answerable": {
+            "type": "boolean",
+            "description": "True if the query can be answered by the current knowledge base; false for negative controls"
+          },
+          "clinical_specialty": {
+            "type": "string",
+            "description": "Medical specialty classification"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Rationale or ground truth summary"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

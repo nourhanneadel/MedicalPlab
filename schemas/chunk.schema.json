@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://medicalplab.org/schemas/chunk.schema.json",
+  "title": "CanonicalChunkSchema",
+  "description": "Schema for structure-aware canonical text chunks used in hybrid retrieval and RAG. Compatible with Adham's data governance pipeline.",
+  "type": "object",
+  "required": [
+    "chunk_id",
+    "document_id",
+    "source_id",
+    "block_index",
+    "section_path",
+    "heading",
+    "text",
+    "content_sha256",
+    "provenance_type",
+    "source_locator"
+  ],
+  "properties": {
+    "chunk_id": {
+      "type": "string",
+      "description": "Unique identifier for the chunk, e.g. doc_nice_acs_chest_pain_chunk_0"
+    },
+    "document_id": {
+      "type": "string",
+      "description": "Foreign key to the parent document"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "Originating source organization, e.g. nice_guidelines"
+    },
+    "block_index": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Zero-indexed sequential position of this chunk within the document"
+    },
+    "section_path": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Hierarchical breadcrumb of headers from document title to current subsection"
+    },
+    "heading": {
+      "type": "string",
+      "description": "Immediate section heading for this chunk"
+    },
+    "text": {
+      "type": "string",
+      "description": "Clean, structure-aware markdown text content of this chunk"
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of the chunk text content for integrity verification"
+    },
+    "provenance_type": {
+      "type": "string",
+      "enum": ["local_markdown", "pdf_extraction", "web_guideline", "synthetic"],
+      "default": "local_markdown"
+    },
+    "source_locator": {
+      "type": "string",
+      "description": "Exact locator formatted as filename#section_heading for provenance tracking"
+    },
+    "title": {
+      "type": "string",
+      "description": "Document title retained for backwards compatibility with existing UI and agents"
+    },
+    "section": {
+      "type": "string",
+      "description": "Section name retained for backwards compatibility with existing UI and agents"
+    },
+    "token_count": {
+      "type": "integer",
+      "description": "Approximate word or token count of the chunk"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional arbitrary metadata"
+    }
+  },
+  "additionalProperties": false
+}

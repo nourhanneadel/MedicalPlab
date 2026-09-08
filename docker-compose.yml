@@ -25,6 +25,8 @@ services:
     container_name: medplab-frontend
     ports:
       - "8501:8501"
+    volumes:
+      - ./streamlit_app.py:/app/streamlit_app.py
     environment:
       - BACKEND_URL=http://backend:8000
     depends_on:

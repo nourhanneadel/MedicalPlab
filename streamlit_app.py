@@ -100,7 +100,7 @@ with tab1:
     with col2:
         topic_filter = st.text_input("Filter by Topic (e.g. CARDIOLOGY, RESPIRATORY)", value="", key="p1_topic")
     with col3:
-        n_q = st.number_input("Number of Questions", min_value=1, max_value=10, value=3, key="p1_n")
+        n_q = st.number_input("Number of Questions", min_value=1, max_value=30, value=5, key="p1_n")
 
     if st.button("🔄 Fetch Clinical Questions", type="primary"):
         with st.spinner("Retrieving verified questions from database..."):

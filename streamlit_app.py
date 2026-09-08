@@ -1,8 +1,9 @@
+import os
 import streamlit as st
 import requests
 import json
 
-API_URL = "http://localhost:8000"
+API_URL = os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
 
 st.set_page_config(
     page_title="MedPlab-Agent | Dual-Brain Clinical Copilot",
@@ -73,7 +74,7 @@ with st.sidebar:
     - ✅ **OSCE Virtual Stations:** 5 Active
     - ✅ **Zero-Hallucination Guardrails:** Enabled
     """)
-    st.caption("Backend Server: `http://localhost:8000`")
+    st.caption(f"Backend Server: `{API_URL}`")
 
 # -------------------------------------------------------------
 # MAIN APP HEADER

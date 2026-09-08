@@ -108,6 +108,39 @@ Open your browser at: `http://localhost:8501`
 
 ---
 
+## 🐳 Run with Docker
+
+Run the entire MedPlab-Agent stack (FastAPI backend + Streamlit frontend) with a single Docker Compose command without needing to manually configure a local Python environment.
+
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/) (included in Docker Desktop)
+
+### 1. Environment Configuration (Optional)
+Copy the example environment template and configure your API keys if available (the application functions in offline heuristic mode if left unconfigured):
+```bash
+cp .env.example .env
+```
+
+### 2. Build & Launch Containers
+```bash
+docker compose up --build
+```
+Or run in detached background mode:
+```bash
+docker compose up --build -d
+```
+
+### 3. Access Services
+- **FastAPI Backend & Interactive Swagger Docs:** [`http://localhost:8000/docs`](http://localhost:8000/docs)
+- **Streamlit Interactive UI:** [`http://localhost:8501`](http://localhost:8501)
+
+### Features & Persistence
+- **Zero Re-download:** Embedding model weights are cached in a named volume (`medplab_hf_cache`) so models persist across container restarts.
+- **Hot Data Mounting:** The `Data/` directory is mounted via volume, allowing SQLite databases and NICE guideline markdown files to be updated dynamically without image rebuilds.
+- **Fast Rebuilds:** Layer caching separates dependency installation from application code.
+
+---
+
 ## 🧪 Evaluation & Verification
 
 - **Automated Verification:** All endpoints (`/plabable`, `/osce/stations`, `/osce/chat`, `/osce/evaluate`, `/tutor/analyze`, `/rag/search`) are verified with 100% pass rates.

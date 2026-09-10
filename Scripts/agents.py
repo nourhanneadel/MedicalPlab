@@ -77,20 +77,48 @@ class MedicalAgents:
         correct_answer = question_data.get("answer", "")
         base_explanation = question_data.get("explanation", "")
 
-        # RAG Retrieval from NICE Guidelines
-        rag_matches = rag_engine.search(question + " " + correct_answer, top_k=2)
+        # RAG Retrieval from NICE Guidelines and GMC Standards (retrieve top 3 for plurality evaluation)
+        rag_matches = rag_engine.search(question + " " + correct_answer, top_k=3)
         citation_text = ""
-        rag_excerpt = ""
+        rag_excerpt_blocks = []
         if rag_matches:
             citation_text = rag_matches[0]["citation"]
-            rag_excerpt = rag_matches[0]["content"]
+            # Note: Each excerpt is explicitly tagged with both its source body ([NICE] or [GMC])
+            # and its clinical domain ([acute_physical_medicine], [mental_health], or [ethics_professionalism]).
+            # This provides the LLM with an explicit signal to detect both cross-organization and
+            # cross-specialty mismatch.
+            for m in rag_matches:
+                source_tag = m.get("source_body") or ("NICE" if "nice" in m.get("document_id", "").lower() else "GMC" if "good_medical_practice" in m.get("document_id", "").lower() else "Guideline")
+                domain_tag = m.get("clinical_domain") or ("ethics_professionalism" if source_tag == "GMC" else "mental_health" if "depression" in m.get("document_id", "").lower() else "acute_physical_medicine")
+                citation = m.get("citation", "")
+                content = m.get("content", "").strip()
+                rag_excerpt_blocks.append(f"[{source_tag} — {domain_tag}] {citation}:\n{content}")
+
+        guideline_context = "\n\n".join(rag_excerpt_blocks) if rag_excerpt_blocks else "No guideline reference excerpt available."
 
         is_correct = (user_choice.strip().lower() == correct_answer.strip().lower())
 
         system_prompt = (
             "You are an expert UK Senior Clinical Consultant and PLAB Medical Tutor. "
             "Guide medical candidates using the Socratic method, highlighting clinical reasoning, "
-            "differential diagnosis, and ruling out incorrect options according to current UK NICE Guidelines."
+            "differential diagnosis, and ruling out incorrect options according to current UK NICE Guidelines "
+            "and GMC professional standards.\n\n"
+            "SOURCE-RELEVANCE RULE:\n"
+            "You may be provided with multiple retrieved reference excerpts tagged by authority and clinical domain "
+            "(e.g. [NICE — acute_physical_medicine], [NICE — mental_health], or [GMC — ethics_professionalism]). "
+            "Only use an excerpt if it directly and substantively answers the specific clinical question asked. "
+            "Disregard any excerpt that is from an unrelated organization OR an unrelated clinical specialty within "
+            "the same organization (e.g. a psychiatric/depression guideline retrieved alongside a question on "
+            "cardiology, endocrinology, neurology, or other physical acute conditions, or a GMC ethics standard "
+            "retrieved alongside an acute prescribing decision).\n\n"
+            "STRICT SILENT EXCLUSION (NO META-COMMENTARY):\n"
+            "If you exclude a retrieved excerpt because it belongs to an unrelated clinical specialty, domain, or "
+            "organizational authority, do so completely and silently. "
+            "Do NOT mention, name, summarize, or refer to the excluded material or its subject matter anywhere in your "
+            "answer (including socratic_verdict, differentiating_matrix, clinical_pearl, or nice_recommendation). "
+            "Do not include statements such as 'unrelated psychiatric guidelines were disregarded' or 'ignoring mental health guidelines'. "
+            "Simply proceed as if the irrelevant excerpt was never provided. Any mention of what was disregarded, even to "
+            "explain your filtering, is a mistake."
         )
         user_prompt = f"""
 Clinical Question: {question}
@@ -98,7 +126,8 @@ Options: {choices}
 Correct Answer: {correct_answer}
 Candidate's Selected Option: {user_choice}
 Is Candidate Correct: {is_correct}
-NICE Guideline Excerpt: {rag_excerpt}
+Guideline Reference Excerpt(s):
+{guideline_context}
 
 Provide your analysis in clean JSON format with these exact keys:
 {{
@@ -107,7 +136,7 @@ Provide your analysis in clean JSON format with these exact keys:
     {{"option": "option text", "verdict": "CORRECT or RULED OUT", "clinical_reason": "Specific clinical reason why this option applies or is discarded"}}
   ],
   "clinical_pearl": "A high-yield takeaway rule for the PLAB exam",
-  "nice_recommendation": "Summary of what the relevant NICE guideline mandates"
+  "nice_recommendation": "Summary of what the relevant clinical guideline mandates. Strictly exclude any off-topic specialty or ethical content, and do not provide meta-commentary on excluded topics."
 }}
 """
         llm_response = cls.call_llm(system_prompt, user_prompt, api_key)
@@ -148,11 +177,33 @@ Provide your analysis in clean JSON format with these exact keys:
         else:
             verdict = f"Let's review this together. You selected **{user_choice}**, but the gold-standard recommendation is **{correct_answer}**. Notice the acute markers and symptom duration in the vignette."
 
+        fallback_excerpt = ""
+        if rag_matches:
+            # Domain-aware fallback selection:
+            # Pick the candidate whose clinical_domain matches the PLURALITY domain among all returned rag_matches.
+            # If there's a tie or only one match, keep the existing rank-based fallback (rag_matches[0]).
+            # Note: This is a heuristic safety net specifically for when the LLM/API path is unavailable;
+            # the prompt-level source-relevance filtering in the LLM path is the primary defense.
+            from collections import Counter
+            domain_counts = Counter(m.get("clinical_domain") for m in rag_matches if m.get("clinical_domain"))
+            if domain_counts:
+                most_common = domain_counts.most_common()
+                if len(most_common) == 1 or most_common[0][1] > most_common[1][1]:
+                    plurality_domain = most_common[0][0]
+                    chosen_candidate = next((m for m in rag_matches if m.get("clinical_domain") == plurality_domain), rag_matches[0])
+                else:
+                    chosen_candidate = rag_matches[0]
+            else:
+                chosen_candidate = rag_matches[0]
+
+            fallback_excerpt = chosen_candidate.get("content", "")
+            citation_text = chosen_candidate.get("citation", citation_text)
+
         return {
             "socratic_verdict": verdict,
             "differentiating_matrix": matrix,
             "clinical_pearl": "In PLAB exams, always prioritize hemodynamic stabilization and time-critical interventions (e.g. PPCI within 120 mins) over elective workups.",
-            "nice_recommendation": rag_excerpt[:250] + "..." if rag_excerpt else "Follow established NICE clinical pathways for primary management.",
+            "nice_recommendation": fallback_excerpt[:250] + "..." if fallback_excerpt else "Follow established NICE clinical pathways for primary management.",
             "rag_citation": citation_text or "NICE Clinical Guidelines Reference"
         }
 

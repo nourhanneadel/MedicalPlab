@@ -1,7 +1,7 @@
 {
   "eval_set_id": "eval_nice_guidelines_v1",
-  "version": "1.1.0",
-  "description": "Evaluation dataset of 21 test cases based directly on NICE Guidelines in Data/Guidelines/. Contains Batch 1 (TC-001 to TC-014: exact clinical terminology across cardiology, respiratory, endocrinology, nephrology/hypertension, and acute emergencies; TC-015: unanswerable negative control) and Batch 2 (TC-016 to TC-021: paraphrased, lay-language, and synonym-heavy queries specifically designed to test dense semantic retrieval and vocabulary mismatch against BM25).",
+  "version": "1.3.0",
+  "description": "Multi-source evaluation dataset of 46 test cases based on NICE Clinical Guidelines, GMC Good Medical Practice (2024), and NICE NG222 Depression in Adults. Contains Batch 1 (TC-001 to TC-014: exact clinical terminology across cardiology, respiratory, endocrinology, nephrology/hypertension, and acute emergencies; TC-015: unanswerable clinical negative control), Batch 2 (TC-016 to TC-021: paraphrased, lay-language clinical queries), Batch 3 (TC-022 to TC-033: GMC ethics and professional standards across Domains 1-4 including lay queries; TC-034: unanswerable ethics/governance negative control), and Batch 4 (TC-035 to TC-045: NICE NG222 Depression in Adults clinical recommendations, severity thresholds, pharmacological/psychological management, and lay queries; TC-046: unanswerable pediatric depression negative control).",
   "cases": [
     {
       "id": "TC-001",
@@ -191,6 +191,231 @@
       "answerable": true,
       "clinical_specialty": "Emergency Medicine",
       "notes": "Paraphrased query for Sepsis Six pathway within 1 hour of recognition."
+    },
+    {
+      "id": "TC-022",
+      "query": "What is the GMC presumption regarding capacity and informed consent for adult patients?",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Supporting patients to make decisions about treatment and care",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 24-27: You must start from the presumption that all adult patients have capacity to make decisions about their treatment and care."
+    },
+    {
+      "id": "TC-023",
+      "query": "GMC guidance on patient confidentiality and protecting medical records after a patient dies",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Treating patients fairly and respecting their rights",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 22: You must treat information about patients as confidential, including after a patient has died."
+    },
+    {
+      "id": "TC-024",
+      "query": "GMC requirements for duty of candour and apologising to patients when harm occurs",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Being open if things go wrong",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 45: Duty of candour, apologise, put matters right, and explain short- and long-term effects (apologising does not mean admitting legal liability)."
+    },
+    {
+      "id": "TC-025",
+      "query": "Action required when a doctor suspects abuse or neglect of a child or vulnerable adult",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Safeguarding children and adults who are at risk of harm",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 41-42: You must act promptly on any concerns about a patient who may be at risk of abuse or neglect."
+    },
+    {
+      "id": "TC-026",
+      "query": "Professional requirements for recognizing limits of competence and working under appropriate supervision",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Being competent",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 2: You must recognise and work within the limits of your competence and only practise under appropriate supervision."
+    },
+    {
+      "id": "TC-027",
+      "query": "Standards for providing remote clinical consultations by telephone or video link",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Offering remote consultations",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 9: You must provide safe and effective clinical care face-to-face or remotely; offer alternatives if safe care cannot be provided."
+    },
+    {
+      "id": "TC-028",
+      "query": "Doctor responsibilities when raising concerns about unsafe equipment, premises, or an impaired colleague",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Responding to safety risks",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 75-76: Act promptly if patient safety is compromised, put matters right, raise concerns, report colleague fitness to practise concerns."
+    },
+    {
+      "id": "TC-029",
+      "query": "GMC standards when delegating clinical tasks to colleagues or refusing an unsafe delegated task",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Delegating safely and appropriately",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 66-68: Ensure delegate has necessary knowledge and skills; prioritise patient safety and seek help if not confident with delegated task."
+    },
+    {
+      "id": "TC-030",
+      "query": "Accepting incentive payments, gifts, or hospitality and declaring conflicts of interest in healthcare",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Managing conflicts of interest",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 94-97: Must not accept gifts or incentives that affect treatment decisions, declare conflicts of interest, avoid self-prescribing."
+    },
+    {
+      "id": "TC-031",
+      "query": "GMC rules prohibiting sexual relationships with patients and expressing personal beliefs to vulnerable patients",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Maintaining professional boundaries",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "GMC para 86-87: Must not act in a sexual way or pursue improper relationships; must not exploit vulnerability with personal beliefs."
+    },
+    {
+      "id": "TC-032",
+      "query": "What should a doctor do if they make an accidental medical mistake that harms someone under their care?",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Being open if things go wrong",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "Paraphrased/lay query for Duty of Candour (GMC para 45-47). Tests dense matching on accidental mistake that harms someone vs being open if things go wrong."
+    },
+    {
+      "id": "TC-033",
+      "query": "Is it permitted for a physician to flirt, ask a patient out on a date, or share intimate personal feelings?",
+      "gold_document_id": "doc_good_medical_practice",
+      "gold_section": "Maintaining professional boundaries",
+      "answerable": true,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "Paraphrased/lay query for GMC para 86 on maintaining sexual and emotional professional boundaries with patients."
+    },
+    {
+      "id": "TC-034",
+      "query": "Detailed statutory calculation formula for commercial failure to prevent bribery under section 7 of the UK Bribery Act 2010",
+      "gold_document_id": "none",
+      "gold_section": "none",
+      "answerable": false,
+      "clinical_specialty": "Medical Ethics and Law",
+      "notes": "Negative control: Plausible legal/governance query, but statutory criminal corporate bribery formulas are outside GMC Good Medical Practice."
+    },
+    {
+      "id": "TC-035",
+      "query": "What PHQ-9 score threshold differentiates less severe depression from more severe depression in adults?",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "Definitions of depression and severity (PHQ-9 thresholds)",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 defines less severe depression as PHQ-9 score <16 and more severe depression as PHQ-9 score >=16."
+    },
+    {
+      "id": "TC-036",
+      "query": "First-line treatment options for less severe depression without previous history in adults",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.5 Treatment options for less severe depression",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 Table 1 and recommendation 1.5.1 recommend non-pharmacological therapies (digital CBT, group CBT, guided self-help, group behavioural activation) rather than routine antidepressants."
+    },
+    {
+      "id": "TC-037",
+      "query": "What is the first-line treatment for a new episode of more severe depression?",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.6 Treatment options for more severe depression",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 Table 2 and recommendation 1.6.1 recommend offering a combination of an antidepressant and individual CBT as first-line for more severe depression."
+    },
+    {
+      "id": "TC-038",
+      "query": "Toxicity in overdose and prescribing tricyclic antidepressants versus other medication for patients at risk of suicide",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.4 Antidepressant medication for suicide risk and older people",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.4.23: Take into account toxicity in overdose; do not routinely start treatment with TCAs (except lofepramine) as they are associated with the greatest risk in overdose."
+    },
+    {
+      "id": "TC-039",
+      "query": "How should antidepressant medication be stopped and withdrawal symptoms managed when tapering?",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.4 Stopping antidepressant medication and managing withdrawal",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.4.12-1.4.21 advises slow stepwise tapering over weeks or months; if withdrawal symptoms occur, consider restarting previous dose and reducing at a slower rate."
+    },
+    {
+      "id": "TC-040",
+      "query": "Timeline for reviewing young adults aged 18 to 25 or patients at increased suicide risk after starting an antidepressant",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.4 Antidepressant medication for suicide risk and older people",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.4.22: Review 1 week after starting antidepressant medication or increasing dose, and review again no later than 4 weeks."
+    },
+    {
+      "id": "TC-041",
+      "query": "Baseline monitoring and follow-up plasma level checks for lithium augmentation in depression",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.4 Use of lithium as augmentation",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.4.25-1.4.28: Check renal, thyroid, calcium, and weight at baseline and every 6 months; monitor 12-hour post-dose serum lithium 1 week post-initiation/dose change, then weekly until stable."
+    },
+    {
+      "id": "TC-042",
+      "query": "Clinical indications and criteria for considering electroconvulsive therapy ECT for severe depression",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.13 Electroconvulsive therapy for depression",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.13.1: Consider ECT for severe depression if patient preference based on past success, if rapid life-saving response is needed (e.g. not eating/drinking), or if other treatments failed."
+    },
+    {
+      "id": "TC-043",
+      "query": "Recommended medical management for depression presenting with psychotic symptoms",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.12 Psychotic depression",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "NICE NG222 recommendation 1.12.1-1.12.2: Offer referral to specialist mental health services and consider combination treatment with an antidepressant and an antipsychotic (e.g. olanzapine or quetiapine)."
+    },
+    {
+      "id": "TC-044",
+      "query": "How long should someone keep taking their mood medication after they start feeling better to prevent a relapse?",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.8 Preventing relapse",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "Paraphrased lay query for continuation of antidepressant therapy to prevent relapse (NICE NG222 recommendation 1.8.1 and 1.4.11: at least 6 months after remission of symptoms)."
+    },
+    {
+      "id": "TC-045",
+      "query": "What should a doctor tell a patient who stopped their mood medication suddenly and now has dizziness, nausea, headache, and electric shocks?",
+      "gold_document_id": "doc_nice_depression_ng222",
+      "gold_section": "1.4 Stopping antidepressant medication and managing withdrawal",
+      "answerable": true,
+      "clinical_specialty": "Mental Health",
+      "notes": "Paraphrased lay query for antidepressant discontinuation/withdrawal syndrome (NICE NG222 recommendation 1.4.12-1.4.21)."
+    },
+    {
+      "id": "TC-046",
+      "query": "Recommended starting dosage of fluoxetine and specialist psychological therapy pathway for children and young people aged under 18 with moderate depression",
+      "gold_document_id": "none",
+      "gold_section": "none",
+      "answerable": false,
+      "clinical_specialty": "Mental Health",
+      "notes": "Negative control: NICE NG222 explicitly restricts scope to adults aged 18 and over; paediatric and adolescent depression is covered under a separate guideline (NICE NG134)."
     }
   ]
 }

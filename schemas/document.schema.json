@@ -7,6 +7,7 @@
   "required": [
     "document_id",
     "source_id",
+    "clinical_domain",
     "title",
     "filename",
     "content_sha256",
@@ -20,6 +21,15 @@
     "source_id": {
       "type": "string",
       "description": "Identifier of the publisher or repository, e.g. nice_guidelines"
+    },
+    "clinical_domain": {
+      "type": "string",
+      "description": "Broad clinical specialty or governance domain for topic-aware retrieval and filtering",
+      "enum": [
+        "acute_physical_medicine",
+        "mental_health",
+        "ethics_professionalism"
+      ]
     },
     "title": {
       "type": "string",

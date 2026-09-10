@@ -13,6 +13,11 @@ if not logger.handlers:
     logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+# Configurable fraction of the top result's RRF score required for secondary results.
+# Discards results scoring below (top_score * RELEVANCE_THRESHOLD_RATIO).
+# Note: May need tuning depending on corpus size and retrieval diversity requirements.
+RELEVANCE_THRESHOLD_RATIO: float = 0.7
+
 class MedicalRAGEngine:
     """
     Production-grade Hybrid Retrieval Engine for MedPlab.
@@ -30,7 +35,8 @@ class MedicalRAGEngine:
         self,
         chunks_path: Optional[str] = None,
         model_name: str = "BAAI/bge-small-en-v1.5",
-        rrf_k: int = 60
+        rrf_k: int = 60,
+        relevance_threshold_ratio: float = RELEVANCE_THRESHOLD_RATIO
     ):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.base_dir = base_dir
@@ -40,6 +46,7 @@ class MedicalRAGEngine:
         self.embeddings_path = os.path.join(base_dir, "Data", "chunk_embeddings.npy")
         self.model_name = model_name
         self.rrf_k = rrf_k
+        self.relevance_threshold_ratio = relevance_threshold_ratio
 
         self.chunks: List[Dict[str, Any]] = []
         self.bm25 = None
@@ -160,7 +167,8 @@ class MedicalRAGEngine:
                 "citation": f"{c.get('title', '')} — {c.get('heading', c.get('section', ''))}",
                 "score": round(s, 2),
                 "chunk_id": c.get("chunk_id", ""),
-                "document_id": c.get("document_id", "")
+                "document_id": c.get("document_id", ""),
+                "clinical_domain": c.get("clinical_domain", c.get("metadata", {}).get("clinical_domain", ""))
             }
             for s, c in scored[:top_k]
         ]
@@ -200,26 +208,44 @@ class MedicalRAGEngine:
         # Sort chunk indices by fused RRF score descending
         sorted_indices = sorted(rrf_scores.keys(), key=lambda i: rrf_scores[i], reverse=True)
 
+        if not sorted_indices:
+            return []
+
+        # Relative relevance threshold: filter out results scoring below
+        # relevance_threshold_ratio of the top candidate's score.
+        # Applied post-ranking and pre-truncation so that if filtering removes a
+        # contaminated result, a legitimate lower-ranked result can take its place.
+        top_score = rrf_scores[sorted_indices[0]]
+        if top_score <= 0.0:
+            return []
+
+        min_score_threshold = top_score * self.relevance_threshold_ratio
+        filtered_indices = [idx for idx in sorted_indices if rrf_scores[idx] >= min_score_threshold]
+
         # 3. Format outputs matching the exact legacy contract
         results = []
-        for idx in sorted_indices[:top_k]:
+        for idx in filtered_indices[:top_k]:
             chunk = self.chunks[idx]
             title = chunk.get("title", "")
             heading = chunk.get("heading", chunk.get("section", "General Guidance"))
             content = chunk.get("text", "")
-            citation = f"{title} — {heading}"
+            citation = chunk.get("citation", f"{title} \u2014 {heading}")
             score = round(rrf_scores[idx], 4)
 
             results.append({
                 "title": title,
                 "section": heading,
+                "heading": heading,
                 "content": content,
                 "citation": citation,
                 "score": score,
+                "source_body": chunk.get("source_body"),
+                "source_authority_note": chunk.get("source_authority_note"),
                 # Additional fields for audit and evaluation
                 "chunk_id": chunk.get("chunk_id", ""),
                 "document_id": chunk.get("document_id", ""),
-                "source_locator": chunk.get("source_locator", "")
+                "source_locator": chunk.get("source_locator", ""),
+                "clinical_domain": chunk.get("clinical_domain", chunk.get("metadata", {}).get("clinical_domain", ""))
             })
 
         return results

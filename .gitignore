@@ -19,3 +19,7 @@ venv/
 Data/Plabable/Topics/*.pdf
 Data/Plabable/Topics/txts/
 *.npy
+scratch/
+Data/llm_prompts.json
+Data/updated_llm_prompts.json
+

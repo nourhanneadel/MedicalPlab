@@ -161,47 +161,186 @@ def run_retrieval_benchmark():
     hybrid_fn = lambda q, top_k=10: rag_engine.search(q, top_k=top_k)
 
     # Separate batches
-    batch_original = [c for c in cases if c.get("answerable") and int(c["id"].replace("TC-", "")) <= 14]
-    batch_paraphrased = [c for c in cases if c.get("answerable") and int(c["id"].replace("TC-", "")) >= 16]
+    batch_nice_exact = [c for c in cases if c.get("answerable") and int(c["id"].replace("TC-", "")) <= 14]
+    batch_nice_paraphrased = [c for c in cases if c.get("answerable") and 16 <= int(c["id"].replace("TC-", "")) <= 21]
+    batch_gmc = [c for c in cases if c.get("answerable") and 22 <= int(c["id"].replace("TC-", "")) <= 33]
+    batch_ng222 = [c for c in cases if c.get("answerable") and 35 <= int(c["id"].replace("TC-", "")) <= 45]
     batch_all = [c for c in cases if c.get("answerable")]
     negative_cases = [c for c in cases if not c.get("answerable")]
 
-    # Evaluate Batch 1: Original Clinical
-    b1_old = evaluate_engine(old_fn, batch_original)
-    b1_bm25 = evaluate_engine(bm25_fn, batch_original)
-    b1_hybrid = evaluate_engine(hybrid_fn, batch_original)
+    # Evaluate Batch 1: NICE Acute Original Clinical Terms
+    b1_old = evaluate_engine(old_fn, batch_nice_exact)
+    b1_bm25 = evaluate_engine(bm25_fn, batch_nice_exact)
+    b1_hybrid = evaluate_engine(hybrid_fn, batch_nice_exact)
 
-    # Evaluate Batch 2: Paraphrased / Lay
-    b2_old = evaluate_engine(old_fn, batch_paraphrased)
-    b2_bm25 = evaluate_engine(bm25_fn, batch_paraphrased)
-    b2_hybrid = evaluate_engine(hybrid_fn, batch_paraphrased)
+    # Evaluate Batch 2: NICE Acute Paraphrased / Lay Queries
+    b2_old = evaluate_engine(old_fn, batch_nice_paraphrased)
+    b2_bm25 = evaluate_engine(bm25_fn, batch_nice_paraphrased)
+    b2_hybrid = evaluate_engine(hybrid_fn, batch_nice_paraphrased)
 
-    # Evaluate Overall: All Answerable
+    # Evaluate Batch 3: GMC Ethics & Professional Standards (TC-022 to TC-033)
+    b3_old = evaluate_engine(old_fn, batch_gmc)
+    b3_bm25 = evaluate_engine(bm25_fn, batch_gmc)
+    b3_hybrid = evaluate_engine(hybrid_fn, batch_gmc)
+
+    # Evaluate Batch 4: NICE Mental Health (NG222) (TC-035 to TC-045)
+    b4_old = evaluate_engine(old_fn, batch_ng222)
+    b4_bm25 = evaluate_engine(bm25_fn, batch_ng222)
+    b4_hybrid = evaluate_engine(hybrid_fn, batch_ng222)
+
+    # Evaluate Overall: All 43 Answerable Cases Combined (NICE-acute + GMC + NG222)
     all_old = evaluate_engine(old_fn, batch_all)
     all_bm25 = evaluate_engine(bm25_fn, batch_all)
     all_hybrid = evaluate_engine(hybrid_fn, batch_all)
 
     print("=" * 86)
-    print("      MEDPLAB 3-WAY RETRIEVAL ABLATION BENCHMARK (LEXICAL vs BM25 vs HYBRID)")
+    print("   MEDPLAB MULTI-SOURCE RETRIEVAL ABLATION BENCHMARK (NICE + GMC + NG222)")
     print("=" * 86)
-    print(f"Total Cases: {len(cases)} (Original Clinical: {len(batch_original)}, Paraphrased: {len(batch_paraphrased)}, Negative Control: {len(negative_cases)})")
+    print(f"Total Cases: {len(cases)} (NICE Acute Exact: {len(batch_nice_exact)}, NICE Acute Lay: {len(batch_nice_paraphrased)}, GMC Ethics: {len(batch_gmc)}, NICE MH NG222: {len(batch_ng222)}, Negative Controls: {len(negative_cases)})")
 
-    print_batch_table("Batch 1: Original Clinical Terms (TC-001 to TC-014)", b1_old, b1_bm25, b1_hybrid, len(batch_original))
-    print_batch_table("Batch 2: Paraphrased / Lay Queries (TC-016 to TC-021)", b2_old, b2_bm25, b2_hybrid, len(batch_paraphrased))
-    print_batch_table("Overall Benchmark: All Answerable Cases Combined", all_old, all_bm25, all_hybrid, len(batch_all))
+    print_batch_table("Batch 1: NICE Acute Original Clinical Terms (TC-001 to TC-014)", b1_old, b1_bm25, b1_hybrid, len(batch_nice_exact))
+    print_batch_table("Batch 2: NICE Acute Paraphrased / Lay Queries (TC-016 to TC-021)", b2_old, b2_bm25, b2_hybrid, len(batch_nice_paraphrased))
+    print_batch_table("Batch 3: GMC Ethics & Professional Standards (TC-022 to TC-033)", b3_old, b3_bm25, b3_hybrid, len(batch_gmc))
+    print_batch_table("Batch 4: NICE Mental Health (NG222) (TC-035 to TC-045)", b4_old, b4_bm25, b4_hybrid, len(batch_ng222))
+    print_batch_table(f"All Sources Overall: Combined Multi-Source Retrieval (N = {len(batch_all)})", all_old, all_bm25, all_hybrid, len(batch_all))
 
+    # Cross-Source Contamination Audit across 3 source domains
     print("\n" + "=" * 86)
-    print("      PARAPHRASED TEST CASES DETAILED DIAGNOSTIC BREAKDOWN")
+    print("      CROSS-SOURCE CONTAMINATION AUDIT (NICE-Acute vs GMC vs NG222)")
     print("=" * 86)
-    print(f"{'Case ID':<8} | {'BM25 Rank':<10} | {'Hybrid Rank':<12} | {'Query (snippet)':<50}")
-    print("-" * 86)
-    for b_case, h_case in zip(b2_bm25["case_results"], b2_hybrid["case_results"]):
-        b_rank = str(b_case["gold_rank"]) if b_case["gold_rank"] is not None else "MISS (>10)"
-        h_rank = str(h_case["gold_rank"]) if h_case["gold_rank"] is not None else "MISS (>10)"
-        q_snip = (b_case["query"][:47] + "...") if len(b_case["query"]) > 50 else b_case["query"]
-        print(f"{b_case['id']:<8} | {b_rank:<10} | {h_rank:<12} | {q_snip:<50}")
 
-    # Check Negative Controls
+    def get_source_domain(doc_id: str) -> str:
+        if "good_medical_practice" in doc_id or "gmc" in doc_id:
+            return "GMC"
+        elif "depression" in doc_id or "ng222" in doc_id:
+            return "NG222"
+        elif "nice" in doc_id:
+            return "NICE-acute"
+        return "Unknown"
+
+    domains = ["NICE-acute", "GMC", "NG222"]
+    domain_cases = {
+        "NICE-acute": {
+            "all": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NICE-acute"],
+            "exact": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NICE-acute" and int(c["id"].replace("TC-", "")) <= 14],
+            "paraphrased": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NICE-acute" and 16 <= int(c["id"].replace("TC-", "")) <= 21]
+        },
+        "GMC": {
+            "all": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "GMC"],
+            "exact": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "GMC" and int(c["id"].replace("TC-", "")) <= 31],
+            "paraphrased": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "GMC" and int(c["id"].replace("TC-", "")) in [32, 33]]
+        },
+        "NG222": {
+            "all": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NG222"],
+            "exact": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NG222" and int(c["id"].replace("TC-", "")) <= 43],
+            "paraphrased": [c for c in cases if c.get("answerable") and get_source_domain(c.get("gold_document_id", "")) == "NG222" and int(c["id"].replace("TC-", "")) in [44, 45]]
+        }
+    }
+
+    # Contamination tracking: matrix[src][target] = {"all": [], "exact": [], "paraphrased": []}
+    contamination_matrix = {s: {t: {"all": [], "exact": [], "paraphrased": []} for t in domains if t != s} for s in domains}
+
+    for src_d in domains:
+        for c in domain_cases[src_d]["all"]:
+            hits = hybrid_fn(c["query"], top_k=3)
+            is_para = c in domain_cases[src_d]["paraphrased"]
+            for target_d in domains:
+                if src_d == target_d:
+                    continue
+                matching_hits = [h for h in hits if get_source_domain(h.get("document_id", "")) == target_d]
+                if matching_hits:
+                    entry = (c["id"], c["query"], [h.get("citation", "") for h in matching_hits])
+                    contamination_matrix[src_d][target_d]["all"].append(entry)
+                    if is_para:
+                        contamination_matrix[src_d][target_d]["paraphrased"].append(entry)
+                    else:
+                        contamination_matrix[src_d][target_d]["exact"].append(entry)
+
+    # Print 3x3 contamination matrix table
+    print("\nPairwise Contamination Matrix (Top-3 hits contaminated by different source domain):")
+    matrix_header = f"| {'Query Domain':<14} | {'NICE-acute Contam':<22} | {'GMC Contam':<22} | {'NG222 Contam':<22} |"
+    matrix_sep =    f"|{'-'*16}|{'-'*24}|{'-'*24}|{'-'*24}|"
+    print(matrix_header)
+    print(matrix_sep)
+
+    for src_d in domains:
+        cells = []
+        for target_d in domains:
+            if src_d == target_d:
+                cells.append("N/A (Self)")
+            else:
+                c_data = contamination_matrix[src_d][target_d]
+                n_src = len(domain_cases[src_d]["all"])
+                cnt = len(c_data["all"])
+                pct = (cnt / n_src * 100) if n_src > 0 else 0.0
+                cells.append(f"{cnt}/{n_src} ({pct:.1f}%)")
+        print(f"| {src_d:<14} | {cells[0]:<22} | {cells[1]:<22} | {cells[2]:<22} |")
+
+    # Print detailed Exact vs Paraphrased breakdown
+    print("\nContamination Breakdown by Query Formulation (Exact vs Paraphrased):")
+    print(f"{'Query Domain':<14} | {'Contaminating Target':<22} | {'Total':<15} | {'Exact Terms':<15} | {'Paraphrased':<15}")
+    print("-" * 86)
+    for src_d in domains:
+        for target_d in domains:
+            if src_d == target_d:
+                continue
+            c_data = contamination_matrix[src_d][target_d]
+            n_all = len(domain_cases[src_d]["all"])
+            n_ex = len(domain_cases[src_d]["exact"])
+            n_pa = len(domain_cases[src_d]["paraphrased"])
+
+            all_str = f"{len(c_data['all'])}/{n_all} ({(len(c_data['all'])/n_all*100) if n_all else 0:.1f}%)"
+            ex_str = f"{len(c_data['exact'])}/{n_ex} ({(len(c_data['exact'])/n_ex*100) if n_ex else 0:.1f}%)"
+            pa_str = f"{len(c_data['paraphrased'])}/{n_pa} ({(len(c_data['paraphrased'])/n_pa*100) if n_pa else 0:.1f}%)"
+            print(f"{src_d:<14} | {target_d:<22} | {all_str:<15} | {ex_str:<15} | {pa_str:<15}")
+
+    # Print any contaminated queries
+    any_contam = False
+    print("\nDetailed Listing of Contaminated Queries:")
+    for src_d in domains:
+        for target_d in domains:
+            if src_d == target_d:
+                continue
+            entries = contamination_matrix[src_d][target_d]["all"]
+            if entries:
+                any_contam = True
+                print(f"  [{src_d} queries contaminated by {target_d}]:")
+                for cid, q, hits in entries:
+                    print(f"    * [{cid}] '{q}' -> Contaminating Chunks: {hits}")
+    if not any_contam:
+        print("  None - Complete isolation across all domains.")
+
+    # Paraphrased Test Cases Diagnostic Breakdown
+    print("\n" + "=" * 86)
+    print("      PARAPHRASED TEST CASES DIAGNOSTIC BREAKDOWN (NICE + GMC + NG222)")
+    print("=" * 86)
+    print(f"{'Case ID':<8} | {'Domain':<10} | {'BM25 Rank':<10} | {'Hybrid Rank':<12} | {'Query (snippet)':<40}")
+    print("-" * 86)
+    paraphrased_cases = [c for c in cases if c.get("id") in [
+        "TC-016", "TC-017", "TC-018", "TC-019", "TC-020", "TC-021",
+        "TC-032", "TC-033",
+        "TC-044", "TC-045"
+    ]]
+    for c in paraphrased_cases:
+        b_hits = bm25_fn(c["query"], top_k=10)
+        h_hits = hybrid_fn(c["query"], top_k=10)
+        b_rank = None
+        for r, item in enumerate(b_hits, 1):
+            if is_match(item, c["gold_document_id"], c["gold_section"]):
+                b_rank = r
+                break
+        h_rank = None
+        for r, item in enumerate(h_hits, 1):
+            if is_match(item, c["gold_document_id"], c["gold_section"]):
+                h_rank = r
+                break
+        dom = get_source_domain(c["gold_document_id"])
+        b_str = str(b_rank) if b_rank is not None else "MISS (>10)"
+        h_str = str(h_rank) if h_rank is not None else "MISS (>10)"
+        q_snip = (c["query"][:37] + "...") if len(c["query"]) > 40 else c["query"]
+        print(f"{c['id']:<8} | {dom:<10} | {b_str:<10} | {h_str:<12} | {q_snip:<40}")
+
+    # Negative Controls
     print("\n" + "=" * 86)
     print("      NEGATIVE CONTROL / OUT-OF-DOMAIN EVALUATION")
     print("=" * 86)
@@ -210,14 +349,17 @@ def run_retrieval_benchmark():
         top_score = unans_hits[0]["score"] if unans_hits else 0.0
         top_cit = unans_hits[0]["citation"] if unans_hits else "None"
         print(f"Query [{unans['id']}]: '{unans['query']}'")
-        print(f" -> Top Match: '{top_cit}' (Score: {top_score})")
+        print(f" -> Top Match: '{top_cit}' (Score: {top_score:.4f})")
         print(f" -> Result: {'PASS (Low confidence/safe)' if top_score < 0.05 else 'REVIEW'}")
     print("=" * 86 + "\n")
 
     return {
-        "batch_original": {"old": b1_old, "bm25": b1_bm25, "hybrid": b1_hybrid},
-        "batch_paraphrased": {"old": b2_old, "bm25": b2_bm25, "hybrid": b2_hybrid},
+        "batch_nice_exact": {"old": b1_old, "bm25": b1_bm25, "hybrid": b1_hybrid},
+        "batch_nice_paraphrased": {"old": b2_old, "bm25": b2_bm25, "hybrid": b2_hybrid},
+        "batch_gmc": {"old": b3_old, "bm25": b3_bm25, "hybrid": b3_hybrid},
+        "batch_ng222": {"old": b4_old, "bm25": b4_bm25, "hybrid": b4_hybrid},
         "overall": {"old": all_old, "bm25": all_bm25, "hybrid": all_hybrid},
+        "contamination_matrix": contamination_matrix
     }
 
 if __name__ == "__main__":

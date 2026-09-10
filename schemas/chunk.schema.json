@@ -76,6 +76,27 @@
     "metadata": {
       "type": "object",
       "description": "Optional arbitrary metadata"
+    },
+    "source_body": {
+      "type": "string",
+      "description": "Issuing regulatory or clinical authority (e.g. NICE, GMC)"
+    },
+    "source_authority_note": {
+      "type": "string",
+      "description": "Description of regulatory status or legal authority of the source"
+    },
+    "citation": {
+      "type": "string",
+      "description": "Standard citation format for referencing this chunk in clinical and ethical decision-making"
+    },
+    "clinical_domain": {
+      "type": "string",
+      "description": "Broad clinical specialty or governance domain (e.g. acute_physical_medicine, mental_health, ethics_professionalism)",
+      "enum": [
+        "acute_physical_medicine",
+        "mental_health",
+        "ethics_professionalism"
+      ]
     }
   },
   "additionalProperties": false

@@ -34,15 +34,16 @@ def get_U_questions_by_ids(ids, db_path="merged.db"):
     
     return results
 
-def getRandom_u_questions(n, topic=None, level=None, db_path="merged.db"):
+def getRandom_u_questions(n, topic=None, level=None, exclude_ids=None, db_path="merged.db"):
     """
-    Retrieve n random questions from the database filtered by topic and/or level.
+    Retrieve n random questions from the database filtered by topic and/or level, optionally excluding IDs.
 
     :param n: Number of random questions to retrieve
     :param topic: (Optional) Topic to filter questions by
     :param level: (Optional) Level to filter questions by
+    :param exclude_ids: (Optional) List of question IDs to exclude
     :param db_path: Path to the database file
-    :return: List of question tuples
+    :return: List of question dicts
     """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -57,16 +58,22 @@ def getRandom_u_questions(n, topic=None, level=None, db_path="merged.db"):
     if level is not None:
         conditions.append('level = ?')
         params.append(level)
+    if exclude_ids:
+        placeholders = ', '.join('?' for _ in exclude_ids)
+        conditions.append(f'id NOT IN ({placeholders})')
+        params.extend(exclude_ids)
+
     if conditions:
         query += ' WHERE ' + ' AND '.join(conditions)
 
     cursor.execute(query, params)
     all_ids = [row[0] for row in cursor.fetchall()]
+    if not all_ids:
+        conn.close()
+        return []
 
-    if len(all_ids) < n:
-        raise ValueError("Not enough questions in the database to retrieve the requested number with the given filters.")
-
-    random_ids = random.sample(all_ids, n)
+    sample_size = min(n, len(all_ids))
+    random_ids = random.sample(all_ids, sample_size)
     questions = get_U_questions_by_ids(random_ids, db_path)
     conn.close()
     # Convert tuples to dicts for API compatibility

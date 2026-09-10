@@ -40,11 +40,70 @@ st.markdown("""
         padding: 1rem;
         text-align: center;
     }
+    .paywall-box {
+        background-color: #FEF3C7;
+        border: 1px solid #F59E0B;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # -------------------------------------------------------------
-# SIDEBAR: AI Configuration & Knowledge Base Status
+# Session State Initialization
+# -------------------------------------------------------------
+if "auth_token" not in st.session_state:
+    st.session_state["auth_token"] = None
+if "current_user" not in st.session_state:
+    st.session_state["current_user"] = None
+if "distinct_accessed" not in st.session_state:
+    st.session_state["distinct_accessed"] = 0
+if "free_limit" not in st.session_state:
+    st.session_state["free_limit"] = 30
+if "access_request_status" not in st.session_state:
+    st.session_state["access_request_status"] = "none"
+if "plab_questions" not in st.session_state:
+    st.session_state["plab_questions"] = []
+if "tutor_analysis" not in st.session_state:
+    st.session_state["tutor_analysis"] = {}
+if "paywall_info" not in st.session_state:
+    st.session_state["paywall_info"] = None
+if "osce_chat" not in st.session_state:
+    st.session_state["osce_chat"] = []
+if "osce_eval" not in st.session_state:
+    st.session_state["osce_eval"] = None
+
+def get_auth_headers():
+    token = st.session_state.get("auth_token")
+    return {"Authorization": f"Bearer {token}"} if token else {}
+
+def refresh_user_profile():
+    token = st.session_state.get("auth_token")
+    if not token:
+        return None
+    try:
+        res = requests.get(f"{API_URL}/auth/me", headers=get_auth_headers())
+        if res.status_code == 200:
+            data = res.json()
+            st.session_state["current_user"] = data.get("user")
+            st.session_state["distinct_accessed"] = data.get("distinct_questions_accessed", 0)
+            st.session_state["free_limit"] = data.get("free_tier_question_limit", 30)
+            st.session_state["access_request_status"] = data.get("access_request_status", "none")
+            return data
+        elif res.status_code == 401:
+            st.session_state["auth_token"] = None
+            st.session_state["current_user"] = None
+            return None
+    except Exception:
+        return None
+
+# Refresh user profile if authenticated
+if st.session_state.get("auth_token"):
+    refresh_user_profile()
+
+# -------------------------------------------------------------
+# SIDEBAR: Account Profile & Knowledge Base Status
 # -------------------------------------------------------------
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/medical-doctor.png", width=64)
@@ -53,14 +112,35 @@ with st.sidebar:
     st.caption("Designed for UK PLAB 1 & PLAB 2 (OSCE) Excellence")
     st.divider()
 
-    st.subheader("⚙️ GenAI Settings")
-    llm_provider = st.selectbox("LLM Engine", ["Google Gemini (Recommended)", "OpenAI", "Offline Demo (Heuristic)"])
-    api_key_input = st.text_input(
-        "API Key (Optional)",
-        type="password",
-        help="Leave blank to use the intelligent built-in offline simulation mode."
-    )
-    api_key = api_key_input.strip() if api_key_input.strip() else None
+    if st.session_state.get("auth_token") and st.session_state.get("current_user"):
+        user = st.session_state["current_user"]
+        st.subheader("👤 Candidate Profile")
+        st.write(f"**Email:** `{user.get('email')}`")
+        sub_status = user.get("subscription_status", "free")
+        if sub_status == "active":
+            st.success("💎 **Status: Full Access (Active)**")
+        else:
+            st.info("🎟️ **Status: Free Tier**")
+            accessed = st.session_state.get("distinct_accessed", 0)
+            limit = st.session_state.get("free_limit", 30)
+            st.write(f"**Questions Accessed:** `{accessed} / {limit}`")
+            req_status = st.session_state.get("access_request_status", "none")
+            if req_status == "pending":
+                st.warning("⏳ Full Access: **Pending Approval**")
+            elif req_status == "approved":
+                st.success("✅ Full Access: **Approved**")
+
+        if st.button("🚪 Log Out", key="btn_logout", use_container_width=True):
+            st.session_state["auth_token"] = None
+            st.session_state["current_user"] = None
+            st.session_state["plab_questions"] = []
+            st.session_state["tutor_analysis"] = {}
+            st.session_state["paywall_info"] = None
+            st.session_state["osce_chat"] = []
+            st.session_state["osce_eval"] = None
+            st.rerun()
+    else:
+        st.info("🔒 Please sign in or register to access clinical training modules.")
 
     st.divider()
     st.subheader("📚 Grounded Knowledge Base")
@@ -80,7 +160,54 @@ with st.sidebar:
     st.caption(f"Backend Server: `{API_URL}`")
 
 # -------------------------------------------------------------
-# MAIN APP HEADER
+# AUTHENTICATION GATE (Block access to tabs if not logged in)
+# -------------------------------------------------------------
+if not st.session_state.get("auth_token") or not st.session_state.get("current_user"):
+    st.markdown('<div class="main-title">🩺 Welcome to MedPlab-Agent</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">An Agentic GenAI platform combining <b>Socratic MCQ Differential Reasoning (PLAB 1)</b> and <b>Interactive Virtual Patient Consultations (PLAB 2 OSCE)</b>.</div>', unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        auth_mode = st.radio("Choose Option:", ["Log In", "Create Free Account"], horizontal=True)
+        with st.form("auth_box"):
+            email_val = st.text_input("Email Address", placeholder="doctor@nhs.net")
+            pass_val = st.text_input("Password", type="password", placeholder="Enter password (min 6 characters)")
+            auth_submit = st.form_submit_button("Continue", type="primary", use_container_width=True)
+
+        if auth_submit:
+            if not email_val.strip() or not pass_val.strip():
+                st.error("Please enter both email and password.")
+            elif auth_mode == "Create Free Account":
+                try:
+                    r = requests.post(f"{API_URL}/auth/signup", json={"email": email_val.strip(), "password": pass_val.strip()})
+                    if r.status_code == 200:
+                        data = r.json()
+                        st.session_state["auth_token"] = data["token"]
+                        st.session_state["current_user"] = data["user"]
+                        st.success("Account created successfully! Welcome to MedPlab-Agent.")
+                        st.rerun()
+                    else:
+                        st.error(r.json().get("detail", "Sign up failed."))
+                except Exception as e:
+                    st.error(f"Error connecting to backend: {e}")
+            else: # Log In
+                try:
+                    r = requests.post(f"{API_URL}/auth/login", json={"email": email_val.strip(), "password": pass_val.strip()})
+                    if r.status_code == 200:
+                        data = r.json()
+                        st.session_state["auth_token"] = data["token"]
+                        st.session_state["current_user"] = data["user"]
+                        st.success("Logged in successfully!")
+                        st.rerun()
+                    else:
+                        st.error(r.json().get("detail", "Invalid email or password."))
+                except Exception as e:
+                    st.error(f"Error connecting to backend: {e}")
+
+    st.stop()
+
+# -------------------------------------------------------------
+# MAIN APP (Only accessible once authenticated)
 # -------------------------------------------------------------
 st.markdown('<div class="main-title">🩺 MedPlab-Agent: Clinical Decision & OSCE Simulator</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">An Agentic GenAI platform combining <b>Socratic MCQ Differential Reasoning (PLAB 1)</b> and <b>Interactive Virtual Patient Consultations (PLAB 2 OSCE)</b>.</div>', unsafe_allow_html=True)
@@ -112,12 +239,49 @@ with tab1:
                 params = {"n": n_q}
                 if topic_filter.strip():
                     params["topic"] = topic_filter.strip()
-                res = requests.get(f"{API_URL}/{source}", params=params)
+                res = requests.get(f"{API_URL}/{source}", params=params, headers=get_auth_headers())
                 res.raise_for_status()
-                st.session_state["plab_questions"] = res.json()
-                st.session_state["tutor_analysis"] = {}
+                res_data = res.json()
+
+                if isinstance(res_data, dict) and res_data.get("paywall_triggered"):
+                    st.session_state["paywall_info"] = res_data
+                    st.session_state["plab_questions"] = []
+                else:
+                    st.session_state["plab_questions"] = res_data
+                    st.session_state["paywall_info"] = None
+                    st.session_state["tutor_analysis"] = {}
+                refresh_user_profile()
             except Exception as e:
                 st.error(f"Error connecting to backend: {e}")
+
+    # Paywall Triggered Banner & Request Access Button
+    paywall = st.session_state.get("paywall_info")
+    if paywall:
+        st.markdown("""
+        <div class="paywall-box">
+            <h3 style="color:#B45309; margin-top:0;">🔒 Free Tier Limit Reached</h3>
+            <p style="font-size:1.05rem; color:#92400E;">
+                You have reached your free tier question quota. Upgrade to Full Access to unlock the complete PLAB question bank and unlimited clinical consultations.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        req_status = st.session_state.get("access_request_status", "none")
+        if req_status == "pending":
+            st.info("⏳ **Access Upgrade Pending:** Your request for full access has been submitted and is awaiting administrator approval.")
+        else:
+            if st.button("🚀 Request Full Access Upgrade", type="primary"):
+                with st.spinner("Submitting access request..."):
+                    try:
+                        r_req = requests.post(f"{API_URL}/billing/request-access", headers=get_auth_headers())
+                        if r_req.status_code == 200:
+                            st.session_state["access_request_status"] = "pending"
+                            st.success("✅ Access request submitted! An administrator will review and approve your account.")
+                            st.rerun()
+                        else:
+                            st.error(r_req.json().get("detail", "Failed to submit access request."))
+                    except Exception as e:
+                        st.error(f"Request failed: {e}")
 
     questions = st.session_state.get("plab_questions", [])
 
@@ -143,13 +307,18 @@ with tab1:
                                 "choices": choices,
                                 "answer": q.get("answer", ""),
                                 "explanation": q.get("explanation", ""),
-                                "user_choice": user_selection,
-                                "api_key": api_key
+                                "user_choice": user_selection
                             }
-                            resp = requests.post(f"{API_URL}/tutor/analyze", json=payload)
-                            resp.raise_for_status()
-                            analysis = resp.json()
-                            st.session_state[f"analysis_{idx}"] = analysis
+                            resp = requests.post(f"{API_URL}/tutor/analyze", json=payload, headers=get_auth_headers())
+                            if resp.status_code == 429:
+                                err_msg = resp.json().get("detail", "Daily limit reached, try again tomorrow.")
+                                st.warning(f"⚠️ {err_msg}")
+                            elif resp.status_code == 200:
+                                analysis = resp.json()
+                                st.session_state[f"analysis_{idx}"] = analysis
+                                refresh_user_profile()
+                            else:
+                                st.error(f"Analysis failed: {resp.text}")
                         except Exception as e:
                             st.error(f"Analysis failed: {e}")
 
@@ -157,6 +326,11 @@ with tab1:
                 analysis_data = st.session_state.get(f"analysis_{idx}")
                 if analysis_data:
                     st.divider()
+
+                    # Offline Fallback Banner
+                    if analysis_data.get("is_offline_fallback"):
+                        st.info("ℹ️ Running in Offline Demonstration Mode (Heuristic Clinical Engine)")
+
                     st.markdown("##### 🧑‍🏫 Senior Consultant Feedback:")
                     st.markdown(f"> {analysis_data.get('socratic_verdict', '')}")
 
@@ -188,7 +362,7 @@ with tab1:
                     st.warning(analysis_data.get("clinical_pearl", ""))
 
                 st.divider()
-    else:
+    elif not paywall:
         st.info("Click 'Fetch Clinical Questions' above to start your practice session.")
 
 # -------------------------------------------------------------
@@ -275,14 +449,17 @@ with tab2:
                     payload = {
                         "station_id": selected_id,
                         "chat_history": st.session_state["osce_chat"],
-                        "message": active_msg,
-                        "api_key": api_key
+                        "message": active_msg
                     }
-                    p_resp = requests.post(f"{API_URL}/osce/chat", json=payload)
-                    p_resp.raise_for_status()
-                    reply = p_resp.json().get("reply", "")
-                    st.session_state["osce_chat"].append({"role": "assistant", "content": reply})
-                    st.rerun()
+                    p_resp = requests.post(f"{API_URL}/osce/chat", json=payload, headers=get_auth_headers())
+                    if p_resp.status_code == 429:
+                        st.warning(f"⚠️ {p_resp.json().get('detail', 'Daily limit reached, try again tomorrow.')}")
+                    elif p_resp.status_code == 200:
+                        reply = p_resp.json().get("reply", "")
+                        st.session_state["osce_chat"].append({"role": "assistant", "content": reply})
+                        st.rerun()
+                    else:
+                        st.error(f"Error chatting with patient: {p_resp.text}")
                 except Exception as e:
                     st.error(f"Error chatting with patient: {e}")
 
@@ -300,12 +477,15 @@ with tab2:
                         try:
                             eval_payload = {
                                 "station_id": selected_id,
-                                "chat_history": st.session_state["osce_chat"],
-                                "api_key": api_key
+                                "chat_history": st.session_state["osce_chat"]
                             }
-                            e_resp = requests.post(f"{API_URL}/osce/evaluate", json=eval_payload)
-                            e_resp.raise_for_status()
-                            st.session_state["osce_eval"] = e_resp.json()
+                            e_resp = requests.post(f"{API_URL}/osce/evaluate", json=eval_payload, headers=get_auth_headers())
+                            if e_resp.status_code == 429:
+                                st.warning(f"⚠️ {e_resp.json().get('detail', 'Daily limit reached, try again tomorrow.')}")
+                            elif e_resp.status_code == 200:
+                                st.session_state["osce_eval"] = e_resp.json()
+                            else:
+                                st.error(f"Evaluation error: {e_resp.text}")
                         except Exception as e:
                             st.error(f"Evaluation error: {e}")
 

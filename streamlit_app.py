@@ -65,12 +65,15 @@ with st.sidebar:
     st.divider()
     st.subheader("📚 Grounded Knowledge Base")
     st.markdown("""
-    - ✅ **NICE Guidelines RAG:**
+    - ✅ **NICE Guidelines RAG (Acute & Mental Health):**
       - NG185: Acute Coronary Syndromes
       - NG115/80: COPD & Acute Asthma
       - NG28: Type 2 Diabetes Management
       - NG136: Hypertension in Adults
       - NG128/51: Stroke & Sepsis Emergencies
+      - NG222: Depression in Adults
+    - ✅ **GMC Standards RAG (Ethics & Professionalism):**
+      - Good Medical Practice (2024): Domains 1–4 (38 Topics)
     - ✅ **OSCE Virtual Stations:** 5 Active
     - ✅ **Zero-Hallucination Guardrails:** Enabled
     """)
@@ -85,7 +88,7 @@ st.markdown('<div class="sub-title">An Agentic GenAI platform combining <b>Socra
 tab1, tab2, tab3 = st.tabs([
     "📝 PLAB 1: Smart Exam & Socratic Tutor",
     "🩺 PLAB 2: Virtual Clinic (OSCE Simulator)",
-    "📖 NICE Guidelines RAG Explorer"
+    "📖 NICE & GMC Guidelines Explorer"
 ])
 
 # -------------------------------------------------------------
@@ -328,24 +331,32 @@ with tab2:
             st.info(f"**Patient Safety Assessment:** {eval_result.get('critical_safety_comment', '')}")
 
 # -------------------------------------------------------------
-# TAB 3: NICE GUIDELINES RAG EXPLORER
+# TAB 3: NICE & GMC GUIDELINES RAG EXPLORER
 # -------------------------------------------------------------
 with tab3:
-    st.markdown("### 📖 NICE Clinical Guidelines RAG Knowledge Base")
-    st.caption("Search through official British clinical guidelines directly powering the MedPlab-Agent knowledge base.")
+    st.markdown("### 📖 NICE Clinical Guidelines & GMC Ethical Standards Knowledge Base")
+    st.caption("Search through official British clinical guidelines (NICE) and ethical standards (GMC) powering the MedPlab-Agent knowledge base.")
 
-    rag_query = st.text_input("Search Clinical Guidelines (e.g. 'STEMI treatment', 'COPD criteria', 'Type 2 diabetes HbA1c'):", value="chest pain STEMI")
-    if st.button("Search Guidelines"):
-        with st.spinner("Searching indexed NICE documentation..."):
+    rag_query = st.text_input(
+        "Search Clinical Guidelines & GMC Ethics (e.g. 'chest pain STEMI', 'depression treatment', 'patient confidentiality', 'consent'):",
+        value="patient confidentiality"
+    )
+    if st.button("Search Knowledge Base"):
+        with st.spinner("Searching indexed NICE & GMC documentation..."):
             try:
                 g_res = requests.get(f"{API_URL}/rag/search", params={"query": rag_query})
                 g_data = g_res.json().get("results", [])
                 if not g_data:
-                    st.warning("No direct guideline match found. Try broader clinical keywords.")
+                    st.warning("No direct guideline match found. Try broader clinical or ethical keywords.")
                 else:
                     for g in g_data:
-                        st.markdown(f"#### 📘 {g['title']}")
-                        st.markdown(f"**Section:** `{g['section']}` | **Relevance Score:** `{g['score']}`")
+                        source_icon = "⚖️" if g.get("source_body") == "GMC" else "📘"
+                        domain_tag = g.get("clinical_domain", "general").replace("_", " ").title()
+                        authority_note = g.get("source_authority_note", "")
+                        st.markdown(f"#### {source_icon} {g['title']}")
+                        st.markdown(f"**Section:** `{g['section']}` | **Domain:** `{domain_tag}` | **Relevance Score:** `{g['score']}`")
+                        if authority_note:
+                            st.caption(f"**Authority:** `{g.get('source_body', 'NICE')}` — {authority_note}")
                         st.markdown(g["content"])
                         st.divider()
             except Exception as e:

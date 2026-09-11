@@ -160,7 +160,7 @@ def get_plabable_questions(
             exclude_ids = seen_ids
 
         if topic:
-            questions = getRandom_p_questions(n=limit_to_fetch, topic=topic.upper(), exclude_ids=exclude_ids, db_path=DB_PATH)
+            questions = getRandom_p_questions(n=limit_to_fetch, topic=topic.strip(), exclude_ids=exclude_ids, db_path=DB_PATH)
         else:
             questions = getRandom_p_questions(n=limit_to_fetch, exclude_ids=exclude_ids, db_path=DB_PATH)
 

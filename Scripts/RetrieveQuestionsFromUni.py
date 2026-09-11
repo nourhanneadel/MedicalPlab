@@ -52,9 +52,9 @@ def getRandom_u_questions(n, topic=None, level=None, exclude_ids=None, db_path="
     conditions = []
     params = []
 
-    if topic is not None:
-        conditions.append('topic = ?')
-        params.append(topic)
+    if topic is not None and str(topic).strip():
+        conditions.append('LOWER(topic) = LOWER(?)')
+        params.append(str(topic).strip())
     if level is not None:
         conditions.append('level = ?')
         params.append(level)
@@ -68,6 +68,24 @@ def getRandom_u_questions(n, topic=None, level=None, exclude_ids=None, db_path="
 
     cursor.execute(query, params)
     all_ids = [row[0] for row in cursor.fetchall()]
+
+    # If no unseen questions remain matching the filter (e.g. user has seen all available questions),
+    # fall back to all questions matching topic/level so the user can continue practicing.
+    if not all_ids and exclude_ids:
+        fallback_query = 'SELECT id FROM uni'
+        fallback_conditions = []
+        fallback_params = []
+        if topic is not None and str(topic).strip():
+            fallback_conditions.append('LOWER(topic) = LOWER(?)')
+            fallback_params.append(str(topic).strip())
+        if level is not None:
+            fallback_conditions.append('level = ?')
+            fallback_params.append(level)
+        if fallback_conditions:
+            fallback_query += ' WHERE ' + ' AND '.join(fallback_conditions)
+        cursor.execute(fallback_query, fallback_params)
+        all_ids = [row[0] for row in cursor.fetchall()]
+
     if not all_ids:
         conn.close()
         return []

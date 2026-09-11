@@ -35,9 +35,9 @@ def getRandom_p_questions(n, topic=None, exclude_ids=None, db_path="merged.db"):
     conditions = []
     params = []
 
-    if topic is not None:
-        conditions.append('topic = ?')
-        params.append(topic)
+    if topic is not None and str(topic).strip():
+        conditions.append('LOWER(topic) = LOWER(?)')
+        params.append(str(topic).strip())
     if exclude_ids:
         placeholders = ', '.join('?' for _ in exclude_ids)
         conditions.append(f'id NOT IN ({placeholders})')
@@ -48,6 +48,20 @@ def getRandom_p_questions(n, topic=None, exclude_ids=None, db_path="merged.db"):
 
     cursor.execute(query, params)
     all_ids = [row[0] for row in cursor.fetchall()]
+
+    # If no unseen questions remain matching the filter (e.g. user has seen all available questions),
+    # fall back to all questions matching the topic so the user can continue practicing.
+    if not all_ids and exclude_ids:
+        fallback_query = 'SELECT id FROM plabable_all'
+        fallback_conditions = []
+        fallback_params = []
+        if topic is not None and str(topic).strip():
+            fallback_conditions.append('LOWER(topic) = LOWER(?)')
+            fallback_params.append(str(topic).strip())
+        if fallback_conditions:
+            fallback_query += ' WHERE ' + ' AND '.join(fallback_conditions)
+        cursor.execute(fallback_query, fallback_params)
+        all_ids = [row[0] for row in cursor.fetchall()]
 
     if not all_ids:
         conn.close()

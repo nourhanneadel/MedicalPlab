@@ -65,6 +65,8 @@ if "access_request_status" not in st.session_state:
     st.session_state["access_request_status"] = "none"
 if "plab_questions" not in st.session_state:
     st.session_state["plab_questions"] = []
+if "questions_fetched" not in st.session_state:
+    st.session_state["questions_fetched"] = False
 if "tutor_analysis" not in st.session_state:
     st.session_state["tutor_analysis"] = {}
 if "paywall_info" not in st.session_state:
@@ -134,6 +136,7 @@ with st.sidebar:
             st.session_state["auth_token"] = None
             st.session_state["current_user"] = None
             st.session_state["plab_questions"] = []
+            st.session_state["questions_fetched"] = False
             st.session_state["tutor_analysis"] = {}
             st.session_state["paywall_info"] = None
             st.session_state["osce_chat"] = []
@@ -243,6 +246,7 @@ with tab1:
                 res.raise_for_status()
                 res_data = res.json()
 
+                st.session_state["questions_fetched"] = True
                 if isinstance(res_data, dict) and res_data.get("paywall_triggered"):
                     st.session_state["paywall_info"] = res_data
                     st.session_state["plab_questions"] = []
@@ -363,7 +367,10 @@ with tab1:
 
                 st.divider()
     elif not paywall:
-        st.info("Click 'Fetch Clinical Questions' above to start your practice session.")
+        if st.session_state.get("questions_fetched"):
+            st.info("ℹ️ No questions found matching your filter. Please try adjusting or clearing the topic filter.")
+        else:
+            st.info("Click 'Fetch Clinical Questions' above to start your practice session.")
 
 # -------------------------------------------------------------
 # TAB 2: PLAB 2 VIRTUAL CLINIC (OSCE SIMULATOR)

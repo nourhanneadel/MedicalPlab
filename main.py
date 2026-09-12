@@ -8,6 +8,16 @@ from Scripts.RetrieveQuestionsFromPlabable import getRandom_p_questions
 from Scripts.RetrieveQuestionsFromUni import getRandom_u_questions
 from Scripts.rag_engine import rag_engine
 from Scripts.agents import MedicalAgents
+from Scripts.question_generator import (
+    init_generated_questions_table,
+    migrate_existing_questions,
+    generate_question,
+    get_approved_questions,
+    approve_question,
+    reject_question,
+    get_pending_questions,
+    get_approved_topics
+)
 from Scripts.auth_db import (
     init_auth_tables,
     create_user,
@@ -36,10 +46,12 @@ app = FastAPI(
     version="2.1.0"
 )
 
-# Initialize authentication and metering tables on startup
+# Initialize authentication, metering, and question generator tables on startup
 @app.on_event("startup")
 def startup_event():
     init_auth_tables(db_path=DB_PATH)
+    init_generated_questions_table(db_path=DB_PATH)
+    migrate_existing_questions(db_path=DB_PATH)
 
 # -----------------------------------------------------------------
 # Pydantic Schemas
@@ -65,6 +77,12 @@ class OSCEChatRequest(BaseModel):
 class OSCEEvaluateRequest(BaseModel):
     station_id: str
     chat_history: List[Dict[str, str]]
+    api_key: Optional[str] = None
+
+class GenerateQuestionRequest(BaseModel):
+    clinical_domain: str
+    topic: Optional[str] = None
+    count: int = 1
     api_key: Optional[str] = None
 
 # Helper to load OSCE stations
@@ -125,12 +143,19 @@ def auth_me(authorization: Optional[str] = Header(None)):
     }
 
 # -----------------------------------------------------------------
-# Gated Question Endpoints (Free / Paid Tier)
 # -----------------------------------------------------------------
-@app.get("/plabable", summary="Get random questions from Plabable pool with tier gating")
-def get_plabable_questions(
-    n: int = Query(10, gt=0, le=100),
+# Gated Question Endpoints (Approved Clinical Questions)
+# -----------------------------------------------------------------
+@app.get("/topics", summary="Get distinct topics available among approved questions")
+def get_topics():
+    return get_approved_topics(db_path=DB_PATH)
+
+@app.get("/questions", summary="Get random approved clinical questions with tier gating")
+def get_questions_unified(
+    n: int = Query(5, gt=0, le=100),
+    clinical_domain: Optional[str] = None,
     topic: Optional[str] = None,
+    source: str = "questions",
     authorization: Optional[str] = Header(None)
 ):
     user = get_current_user(authorization)
@@ -154,61 +179,41 @@ def get_plabable_questions(
         limit_to_fetch = n
         exclude_ids = None
         if sub_status == "free":
-            seen_ids = get_accessed_question_ids(user_id, "plabable", db_path=DB_PATH)
+            seen_ids = get_accessed_question_ids(user_id, source, db_path=DB_PATH)
             remaining = max(0, free_limit - distinct_accessed)
             limit_to_fetch = min(n, remaining)
             exclude_ids = seen_ids
 
-        if topic:
-            questions = getRandom_p_questions(n=limit_to_fetch, topic=topic.strip(), exclude_ids=exclude_ids, db_path=DB_PATH)
-        else:
-            questions = getRandom_p_questions(n=limit_to_fetch, exclude_ids=exclude_ids, db_path=DB_PATH)
+        questions = get_approved_questions(
+            clinical_domain=clinical_domain,
+            topic=topic,
+            exclude_ids=exclude_ids,
+            limit=limit_to_fetch,
+            db_path=DB_PATH
+        )
 
         q_ids = [q["id"] for q in questions if "id" in q]
-        record_question_access(user_id, "plabable", q_ids, db_path=DB_PATH)
+        record_question_access(user_id, source, q_ids, db_path=DB_PATH)
         return questions
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/uni", summary="Get random questions from University pool with tier gating")
+@app.get("/plabable", summary="Get random questions from PLAB pool with tier gating (serves approved questions)")
+def get_plabable_questions(
+    n: int = Query(5, gt=0, le=100),
+    topic: Optional[str] = None,
+    authorization: Optional[str] = Header(None)
+):
+    return get_questions_unified(n=n, clinical_domain=None, topic=topic, source="plabable", authorization=authorization)
+
+@app.get("/uni", summary="Get random questions from University pool with tier gating (serves approved questions)")
 def get_uni_questions(
     n: int = Query(10, gt=0, le=100),
     topic: Optional[str] = None,
     level: Optional[int] = None,
     authorization: Optional[str] = Header(None)
 ):
-    user = get_current_user(authorization)
-    user_id = user["id"]
-    sub_status = user["subscription_status"]
-
-    settings = get_app_settings()
-    free_limit = int(settings.get("free_tier_question_limit", 30))
-    distinct_accessed = get_distinct_questions_accessed_count(user_id, db_path=DB_PATH)
-
-    if sub_status == "free" and distinct_accessed >= free_limit:
-        return {
-            "paywall_triggered": True,
-            "message": f"Free tier limit reached ({distinct_accessed}/{free_limit} questions accessed). Request full access to unlock the complete question bank.",
-            "distinct_accessed": distinct_accessed,
-            "free_limit": free_limit,
-            "questions": []
-        }
-
-    try:
-        limit_to_fetch = n
-        exclude_ids = None
-        if sub_status == "free":
-            seen_ids = get_accessed_question_ids(user_id, "uni", db_path=DB_PATH)
-            remaining = max(0, free_limit - distinct_accessed)
-            limit_to_fetch = min(n, remaining)
-            exclude_ids = seen_ids
-
-        questions = getRandom_u_questions(n=limit_to_fetch, topic=topic, level=level, exclude_ids=exclude_ids, db_path=DB_PATH)
-        q_ids = [q["id"] for q in questions if "id" in q]
-        record_question_access(user_id, "uni", q_ids, db_path=DB_PATH)
-        return questions
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return get_questions_unified(n=n, clinical_domain="acute_physical_medicine", topic=topic, source="uni", authorization=authorization)
 
 # -----------------------------------------------------------------
 # GenAI Feature 1: Socratic Tutor & Differential Diagnosis (Metered)
@@ -380,6 +385,74 @@ def admin_approve_access_request(
     if not ok:
         raise HTTPException(status_code=404, detail=msg)
     return {"success": True, "message": msg}
+
+@app.post("/admin/questions/generate", summary="Generate new questions from canonical chunks (Admin Only)")
+def admin_generate_questions(
+    req: GenerateQuestionRequest,
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    authorization: Optional[str] = Header(None)
+):
+    verify_admin_key(x_admin_key=x_admin_key, authorization=authorization)
+    server_key = req.api_key or os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY")
+    results = []
+    errors = []
+    for _ in range(max(1, min(req.count, 10))):
+        try:
+            q = generate_question(
+                clinical_domain=req.clinical_domain,
+                topic=req.topic,
+                api_key=server_key,
+                db_path=DB_PATH
+            )
+            results.append(q)
+        except Exception as e:
+            errors.append(str(e))
+            break
+
+    if not results and errors:
+        raise HTTPException(status_code=500, detail=errors[0])
+
+    return {
+        "success": True,
+        "generated_count": len(results),
+        "questions": results,
+        "errors": errors if errors else None
+    }
+
+@app.get("/admin/questions/pending", summary="List pending questions awaiting review (Admin Only)")
+def admin_get_pending_questions(
+    limit: int = Query(50, gt=0, le=200),
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    authorization: Optional[str] = Header(None)
+):
+    verify_admin_key(x_admin_key=x_admin_key, authorization=authorization)
+    return get_pending_questions(limit=limit, db_path=DB_PATH)
+
+@app.post("/admin/questions/{question_id}/approve", summary="Approve a generated question (Admin Only)")
+def admin_approve_question(
+    question_id: int,
+    reviewed_by: Optional[str] = Query("admin"),
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    authorization: Optional[str] = Header(None)
+):
+    verify_admin_key(x_admin_key=x_admin_key, authorization=authorization)
+    ok = approve_question(question_id, reviewed_by=reviewed_by or "admin", db_path=DB_PATH)
+    if not ok:
+        raise HTTPException(status_code=404, detail=f"Question #{question_id} not found or update failed.")
+    return {"success": True, "message": f"Question #{question_id} approved successfully."}
+
+@app.post("/admin/questions/{question_id}/reject", summary="Reject a generated question (Admin Only)")
+def admin_reject_question(
+    question_id: int,
+    reviewed_by: Optional[str] = Query("admin"),
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+    authorization: Optional[str] = Header(None)
+):
+    verify_admin_key(x_admin_key=x_admin_key, authorization=authorization)
+    ok = reject_question(question_id, reviewed_by=reviewed_by or "admin", db_path=DB_PATH)
+    if not ok:
+        raise HTTPException(status_code=404, detail=f"Question #{question_id} not found or update failed.")
+    return {"success": True, "message": f"Question #{question_id} rejected successfully."}
 
 if __name__ == "__main__":
     import uvicorn

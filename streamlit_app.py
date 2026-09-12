@@ -162,6 +162,121 @@ with st.sidebar:
     """)
     st.caption(f"Backend Server: `{API_URL}`")
 
+    st.divider()
+    with st.expander("🛠️ Question Bank Admin", expanded=False):
+        st.caption("Generate grounded questions from canonical chunks and review pending items.")
+        admin_key_input = st.text_input("Admin API Key", type="password", key="admin_key_input")
+        if admin_key_input:
+            admin_headers = {"X-Admin-Key": admin_key_input.strip()}
+
+            # Sub-section 1: Generate New Questions
+            st.markdown("#### ⚡ Generate New Questions")
+            gen_domain = st.selectbox(
+                "Clinical Domain",
+                ["acute_physical_medicine", "mental_health", "ethics_professionalism"],
+                key="admin_gen_domain"
+            )
+            gen_topic = st.text_input("Topic / Keyword (Optional)", placeholder="e.g. Depression, Sepsis, GMC", key="admin_gen_topic")
+            gen_count = st.number_input("Count to Generate", min_value=1, max_value=5, value=1, key="admin_gen_count")
+
+            if st.button("Generate Question(s)", key="btn_admin_generate"):
+                with st.spinner("Generating grounded question(s)..."):
+                    try:
+                        g_res = requests.post(
+                            f"{API_URL}/admin/questions/generate",
+                            json={
+                                "clinical_domain": gen_domain,
+                                "topic": gen_topic.strip() if gen_topic.strip() else None,
+                                "count": int(gen_count)
+                            },
+                            headers=admin_headers
+                        )
+                        if g_res.status_code == 200:
+                            data = g_res.json()
+                            st.success(f"Generated {data.get('generated_count', 0)} question(s) awaiting review!")
+                            st.rerun()
+                        elif g_res.status_code == 403:
+                            st.error("Invalid Admin Key.")
+                        elif g_res.status_code == 503:
+                            st.error("Admin functionality disabled on server (ADMIN_API_KEY unset).")
+                        else:
+                            st.error(f"Generation error: {g_res.text}")
+                    except Exception as ex:
+                        st.error(f"Error: {ex}")
+
+            st.divider()
+            # Sub-section 2: Pending Question Review
+            st.markdown("#### 📋 Questions Pending Review")
+            try:
+                p_res = requests.get(f"{API_URL}/admin/questions/pending", headers=admin_headers)
+                if p_res.status_code == 200:
+                    pending = p_res.json()
+                    st.write(f"Total Pending: **{len(pending)}**")
+                    for pq in pending:
+                        with st.expander(f"Q#{pq['id']}: {pq.get('topic', 'General')} ({pq.get('clinical_domain')})", expanded=False):
+                            st.markdown(f"**Question:**\n{pq.get('question_text')}")
+                            st.markdown(f"- **A:** {pq.get('choice_a')}")
+                            st.markdown(f"- **B:** {pq.get('choice_b')}")
+                            st.markdown(f"- **C:** {pq.get('choice_c')}")
+                            st.markdown(f"- **D:** {pq.get('choice_d')}")
+                            st.markdown(f"- **E:** {pq.get('choice_e')}")
+                            st.markdown(f"**Correct Answer:** `{pq.get('correct_answer')}`")
+                            st.markdown(f"**Explanation:** {pq.get('explanation')}")
+                            st.caption(f"Source: `{pq.get('source_citation')}` (Chunk: `{pq.get('source_chunk_id')}`)")
+
+                            c_appr, c_rej = st.columns(2)
+                            with c_appr:
+                                if st.button(f"✅ Approve #{pq['id']}", key=f"appr_{pq['id']}"):
+                                    a_res = requests.post(
+                                        f"{API_URL}/admin/questions/{pq['id']}/approve",
+                                        headers=admin_headers
+                                    )
+                                    if a_res.ok:
+                                        st.success("Approved!")
+                                        st.rerun()
+                                    else:
+                                        st.error(f"Failed to approve: {a_res.text}")
+                            with c_rej:
+                                if st.button(f"❌ Reject #{pq['id']}", key=f"rej_{pq['id']}"):
+                                    r_res = requests.post(
+                                        f"{API_URL}/admin/questions/{pq['id']}/reject",
+                                        headers=admin_headers
+                                    )
+                                    if r_res.ok:
+                                        st.warning("Rejected!")
+                                        st.rerun()
+                                    else:
+                                        st.error(f"Failed to reject: {r_res.text}")
+                elif p_res.status_code == 403:
+                    st.error("Invalid Admin Key.")
+                elif p_res.status_code == 503:
+                    st.error("Admin functionality disabled on server.")
+            except Exception as ex:
+                st.error(f"Error loading pending: {ex}")
+
+            # Sub-section 3: Access Requests Review
+            st.divider()
+            st.markdown("#### 👥 User Access Requests")
+            try:
+                acc_res = requests.get(f"{API_URL}/admin/access-requests", headers=admin_headers)
+                if acc_res.ok:
+                    reqs = acc_res.json()
+                    st.write(f"Total Requests: **{len(reqs)}**")
+                    for ar in reqs:
+                        if ar.get("status") == "pending":
+                            st.write(f"User #{ar.get('user_id')} (`{ar.get('email')}`)")
+                            if st.button(f"Approve Access #{ar.get('id')}", key=f"acc_appr_{ar.get('id')}"):
+                                ok_res = requests.post(f"{API_URL}/admin/access-requests/{ar.get('id')}/approve", headers=admin_headers)
+                                if ok_res.ok:
+                                    st.success("Access Approved!")
+                                    st.rerun()
+                                else:
+                                    st.error(ok_res.text)
+                elif acc_res.status_code == 403:
+                    st.error("Invalid Admin Key.")
+            except Exception:
+                pass
+
 # -------------------------------------------------------------
 # AUTHENTICATION GATE (Block access to tabs if not logged in)
 # -------------------------------------------------------------
@@ -230,9 +345,26 @@ with tab1:
 
     col1, col2, col3 = st.columns([2, 2, 1])
     with col1:
-        source = st.selectbox("Question Pool", ["plabable", "uni"], key="p1_source")
+        source = st.selectbox(
+            "Question Pool",
+            ["all", "plabable", "uni"],
+            format_func=lambda x: "All Approved Questions" if x == "all" else f"Pool: {x.title()}",
+            key="p1_source"
+        )
     with col2:
-        topic_filter = st.text_input("Filter by Topic (e.g. CARDIOLOGY, RESPIRATORY)", value="", key="p1_topic")
+        available_topics = []
+        try:
+            t_res = requests.get(f"{API_URL}/topics")
+            if t_res.ok:
+                t_data = t_res.json()
+                if isinstance(t_data, dict):
+                    available_topics = t_data.get("topics", [])
+                elif isinstance(t_data, list):
+                    available_topics = t_data
+        except Exception:
+            pass
+        topic_options = ["All Topics"] + [t for t in available_topics if t]
+        selected_topic = st.selectbox("Filter by Topic", topic_options, key="p1_topic")
     with col3:
         n_q = st.number_input("Number of Questions", min_value=1, max_value=30, value=5, key="p1_n")
 
@@ -240,9 +372,10 @@ with tab1:
         with st.spinner("Retrieving verified questions from database..."):
             try:
                 params = {"n": n_q}
-                if topic_filter.strip():
-                    params["topic"] = topic_filter.strip()
-                res = requests.get(f"{API_URL}/{source}", params=params, headers=get_auth_headers())
+                if selected_topic and selected_topic != "All Topics":
+                    params["topic"] = selected_topic
+                endpoint = "/questions" if source == "all" else f"/{source}"
+                res = requests.get(f"{API_URL}{endpoint}", params=params, headers=get_auth_headers())
                 res.raise_for_status()
                 res_data = res.json()
 

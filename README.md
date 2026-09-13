@@ -15,13 +15,26 @@
 - **Beyond Static Answer Keys:** When a candidate answers an MCQ, the AI acts as a Senior Clinical Consultant using the Socratic method to explore clinical reasoning.
 - **Differential Diagnosis Matrix:** Automatically breaks down every distractor option (A, B, C, D, E), explaining clinically why the correct choice is the gold standard and why each other option is ruled out.
 - **Zero-Hallucination Guardrails:** Every explanation is anchored in official British clinical practice (**NICE Guidelines**) with direct section citations.
+- **Dynamic Topic & Pool Filtering:** Candidates can select specific question pools (`All Approved Questions`, `Plabable`, or `Uni`) and filter by dynamically discovered clinical topics with intelligent practice fallback.
 
-### 2. 🩺 Interactive Virtual Clinic (PLAB 2 OSCE Simulator)
+### 2. ⚡ GenAI Question Generator & Mandatory Human-Review Gate
+- **Grounded On-Demand Question Generation:** Replaces static fixtures with on-demand PLAB 1 Single Best Answer (SBA) questions strictly grounded in the 88 canonical NICE & GMC guideline chunks (`Data/canonical_chunks.json`) across acute medicine, mental health, and medical ethics.
+- **Strict Human-in-the-Loop Clinical Gate:** In compliance with clinical safety standards, **no AI-generated medical question is served to candidates without prior human review and approval**. All generated questions are placed into a `pending_review` queue.
+- **Administrative Review Panel:** Built into both the Streamlit UI and secured FastAPI endpoints (`/admin/questions/*`), enabling clinician administrators to review clinical vignettes, examine choices A–E, inspect citations, and approve or reject questions with reviewer attribution.
+- **Zero-Fabrication Guardrail:** Requires server-side LLM credentials; ungrounded heuristic fabrication is strictly blocked with explicit error feedback.
+
+### 3. 👤 User Accounts, Question Gating & Server-Side Metering
+- **User Authentication:** Multi-tenant candidate accounts with bcrypt password hashing and JWT bearer tokens (`/auth/signup`, `/auth/login`, `/auth/me`).
+- **Free/Paid Tier Access Gating:** Free users have a configurable question quota (`free_tier_question_limit: 30`, managed via `Data/config/app_settings.json`). Once exhausted, an upgrade paywall is displayed.
+- **Request Access Upgrade Flow:** Candidates can submit upgrade requests (`/billing/request-access`) directly from the paywall; administrators review and grant unlimited access via the admin dashboard.
+- **Server-Side Key Management & Daily Rate Limits:** API keys (`GEMINI_API_KEY` / `OPENAI_API_KEY`) are managed server-side. Candidates are protected by per-user daily rate limiting (`daily_llm_limit: 20`) returning HTTP 429 when exceeded.
+
+### 4. 🩺 Interactive Virtual Clinic (PLAB 2 OSCE Simulator)
 - **Live Simulated Patients:** Roleplay consultations with realistic AI patients (e.g. *Arthur Pendelton* with acute chest pain or *Brenda Higgins* with chronic dyspnea).
 - **Dynamic Hidden Backstory:** Patients have real emotions, vital signs, and fears, disclosing history progressively only when appropriately elicited by the doctor.
 - **Senior GMC Examiner Agent:** At the end of the station, an automated examiner scores the consultation out of 15 across **History Taking (/5)**, **Clinical Judgment (/5)**, and **Communication & Empathy (/5)**, highlighting missed red flags and patient safety assessments.
 
-### 3. 📖 Multi-Source Clinical & Regulatory Knowledge Base
+### 5. 📖 Multi-Source Clinical & Regulatory Knowledge Base
 - **Hybrid Retrieval Engine (BM25 + Dense Embeddings + RRF):** Uses hybrid retrieval combining BM25 lexical search and dense semantic embeddings (`BAAI/bge-small-en-v1.5`) via Reciprocal Rank Fusion across 88 canonical chunks spanning three major authorities and clinical domains:
   - **NICE Acute Clinical Guidelines (`acute_physical_medicine`):** Verified UK management protocols for acute coronary syndromes (NG185), COPD and acute asthma (NG115/NG80), type 2 diabetes (NG28), hypertension (NG136), and acute stroke & sepsis emergencies (NG128/NG51).
   - **NICE Mental Health (`mental_health`):** Depression in adults (NG222), covering recognition, PHQ-9 severity thresholds, stepped care, first-line pharmacotherapy, and augmentation strategies.
@@ -33,17 +46,21 @@
 ## 🏗️ System Architecture
 
 ```
-User (Medical Candidate)
+User (Medical Candidate / Clinician Admin)
        │
        ▼
 Streamlit Interactive UI (Port 8501)
+ ├── Candidate Portal (Auth, PLAB 1 Smart Exam, OSCE Simulator, Guidelines)
+ └── Admin Dashboard (Grounded Question Generator, Human Review Queue, Access Requests)
        │
        ▼
 FastAPI Backend (Port 8000)
-       ├─── Socratic Tutor Agent ───► Differential Diagnosis Engine
-       ├─── Virtual Patient Agent ──► Dynamic Clinical Roleplay
-       ├─── GMC Examiner Agent ─────► Scoring & Rubric Feedback
-       └─── Medical RAG Engine ─────► Multi-Source Knowledge Base (NICE + GMC)
+ ├── Question Generator ────► Strictly Grounded in Canonical Chunks (Pending Review Gate)
+ ├── Socratic Tutor Agent ──► Differential Diagnosis Matrix & Zero-Hallucination Advice
+ ├── Virtual Patient Agent ─► Dynamic Clinical Roleplay (5 Stations)
+ ├── GMC Examiner Agent ────► Scoring & Rubric Feedback (/15)
+ ├── Auth & Metering DB ────► Bcrypt Auth, Quota Capping, Daily Rate Limits, Access Approval
+ └── Medical RAG Engine ────► Hybrid Retrieval (BM25 + Dense + RRF) across NICE & GMC
 ```
 
 ---
@@ -52,8 +69,8 @@ FastAPI Backend (Port 8000)
 
 ```
 MedicalPlab/
-├── main.py                      # FastAPI Backend Server
-├── streamlit_app.py             # Streamlit Frontend Web App
+├── main.py                      # FastAPI Backend Server (Candidate & Admin Endpoints)
+├── streamlit_app.py             # Streamlit Frontend Web App (Candidate & Admin Views)
 ├── Dockerfile.backend           # Container configuration for Backend
 ├── Dockerfile.frontend          # Container configuration for Frontend
 ├── docker-compose.yml           # Multi-container orchestration
@@ -61,6 +78,8 @@ MedicalPlab/
 │   ├── document.schema.json
 │   └── chunk.schema.json
 ├── Data/
+│   ├── config/                  # Runtime Configuration
+│   │   └── app_settings.json    # Dynamic quotas (free_tier_question_limit, daily_llm_limit)
 │   ├── Guidelines/              # Clinical & Regulatory Guidelines (Markdown)
 │   │   ├── NICE/                # Acute & Mental Health Guidelines
 │   │   │   ├── nice_acs_chest_pain.md
@@ -76,13 +95,16 @@ MedicalPlab/
 │   │   └── retrieval_eval_v1.json
 │   ├── OSCE_Stations/           # PLAB 2 Clinical Scenarios & Rubrics
 │   │   └── stations.json
-│   └── db/                      # SQLite Database (PLAB 1 & Uni questions)
+│   └── db/                      # SQLite Database (Auth, Access, Questions, Generated Pool)
 │       └── merged.db
 ├── Scripts/
+│   ├── question_generator.py    # GenAI question generator, migration & human-review gate
+│   ├── auth_db.py               # User accounts, JWT auth, metering, and access requests
 │   ├── agents.py                # Multi-Agent AI System (Tutor, Patient, Examiner)
 │   ├── rag_engine.py            # Hybrid RAG Engine (BM25 + Dense + RRF)
 │   ├── build_canonical_chunks.py# Canonical chunking & domain classification
 │   ├── evaluate_retrieval.py    # 4-batch retrieval ablation & contamination audit
+│   ├── verify_question_system.py# Comprehensive verification suite (6 mandatory checks)
 │   ├── populate_medical_data.py # Automated Data Setup Script
 │   ├── utils.py                 # PDF & Data extraction utilities
 │   ├── RetrieveQuestionsFromPlabable.py
@@ -167,11 +189,71 @@ docker compose up --build -d
 
 ---
 
+## 🛠️ Question Bank Administration & Clinical Safety
+
+To ensure patient safety and high pedagogical quality, MedPlab-Agent enforces a **strict human-review approval gate** before any AI-generated question is served to real medical candidates.
+
+### 1. Streamlit Admin Dashboard
+1. Open [`http://localhost:8501`](http://localhost:8501) and locate **`🛠️ Question Bank Admin`** in the left sidebar.
+2. Enter the configured `ADMIN_API_KEY` (e.g. `medplab_admin_secret_98765`).
+3. **⚡ Generate Questions:** Select clinical domain (`acute_physical_medicine`, `mental_health`, `ethics_professionalism`), optional keyword/topic, and count (1–5). Questions are generated strictly grounded in canonical chunks and stored with `review_status = 'pending_review'`.
+4. **📋 Review Queue:** Inspect full clinical vignettes, choices A through E, correct answers, explanations, and exact NICE/GMC citations. Click **`✅ Approve`** to make a question live for candidates, or **`❌ Reject`** to permanently discard it.
+5. **👥 User Access Upgrades:** Review pending upgrade requests from free-tier candidates and grant full access with a single click.
+
+### 2. Admin REST API Endpoints
+
+All admin endpoints require the `X-Admin-Key` header:
+
+```bash
+# 1. Generate questions on-demand (inserted as pending_review)
+curl -X POST "http://localhost:8000/admin/questions/generate" \
+     -H "Content-Type: application/json" \
+     -H "X-Admin-Key: <YOUR_ADMIN_API_KEY>" \
+     -d '{"clinical_domain": "mental_health", "topic": "Depression", "count": 2}'
+
+# 2. List all questions awaiting review
+curl -X GET "http://localhost:8000/admin/questions/pending" \
+     -H "X-Admin-Key: <YOUR_ADMIN_API_KEY>"
+
+# 3. Approve a question for candidate delivery
+curl -X POST "http://localhost:8000/admin/questions/16/approve?reviewed_by=DrLeadExaminer" \
+     -H "X-Admin-Key: <YOUR_ADMIN_API_KEY>"
+
+# 4. Reject an unsuitable question
+curl -X POST "http://localhost:8000/admin/questions/17/reject?reviewed_by=QualityAuditor" \
+     -H "X-Admin-Key: <YOUR_ADMIN_API_KEY>"
+```
+
+---
+
+## ⚙️ Configuration & Environment Variables
+
+| Variable / Setting | Default / Location | Description |
+| :--- | :--- | :--- |
+| `ADMIN_API_KEY` | Environment variable | **Required for Admin operations**. Read strictly with **NO default fallback**. If unset, admin endpoints return HTTP 503. |
+| `GEMINI_API_KEY` | Environment variable | Server-side key for Google Gemini 1.5/2.0 Flash models. |
+| `OPENAI_API_KEY` | Environment variable | Server-side key for OpenAI models (fallback provider). |
+| `free_tier_question_limit` | `Data/config/app_settings.json` | Number of distinct questions a free user can practice (default: `30`) before triggering the paywall. Dynamic without restart. |
+| `daily_llm_limit` | `Data/config/app_settings.json` | Daily LLM reasoning/chat calls per user (default: `20`) returning HTTP 429 when exceeded. Dynamic without restart. |
+
+---
+
 ## 🧪 Evaluation & Verification
 
-- **Automated Verification:** All endpoints (`/plabable`, `/osce/stations`, `/osce/chat`, `/osce/evaluate`, `/tutor/analyze`, `/rag/search`) are verified with 100% pass rates.
-- **Offline Demonstration Mode:** Works with high-quality clinical heuristic fallbacks even without an external API key, ensuring reliable presentation during live competition pitches.
-- **API Keys Supported:** Direct support for Google Gemini 1.5/2.0 Flash (`GEMINI_API_KEY`) and OpenAI (`OPENAI_API_KEY`).
+The test suite validates both question generation and clinical review gating:
+
+```bash
+# Run inside Docker backend container:
+docker exec medplab-backend python Scripts/verify_question_system.py
+```
+
+### Mandatory Verification Checklist (100% Pass Rate)
+- **Check 1 (On-Demand Generation):** Calls `/admin/questions/generate` for `clinical_domain="mental_health"` and verifies rows are created with `status="pending_review"`.
+- **Check 2 (Candidate Gating):** Queries candidate endpoints (`/questions`, `/plabable`) and confirms pending questions are strictly invisible to candidates.
+- **Check 3 (Review & Quota Metering):** Approves a pending question via `/admin/questions/{id}/approve`, confirms it immediately becomes servable to candidates, and verifies it counts toward candidate quota in `/auth/me`. Confirms rejection workflow.
+- **Check 4 (Legacy Migration):** Confirms all 15 pre-existing questions were migrated as pre-approved and remain fully functional.
+- **Check 5 (Approved-Only Topics):** Confirms `GET /topics` strictly returns topics that have at least one approved question.
+- **Check 6 (Zero-Fabrication Guardrail):** Confirms that missing API keys return clear error feedback (`RuntimeError` / HTTP 500) and ungrounded fabrication is blocked.
 
 ---
 
